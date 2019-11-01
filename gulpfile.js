@@ -6,13 +6,10 @@ const vue       = require("rollup-plugin-vue")
 const replace   = require("rollup-plugin-replace")
 const babel     = require("rollup-plugin-babel")
 const minify    = require("babel-minify")
-const less      = require("less")
+const sass      = require("node-sass")
+
 
 const t = {
-   minify (contents) {
-      return minify(contents).code
-   },
-
    async rollup (contents, file) {
       const bundle = await rollup.rollup({ input: file.path, plugins: [
          replace({"process.env.NODE_ENV": "'develop'"}),
@@ -26,10 +23,16 @@ const t = {
       return code
    },
 
-   async less (contents) {
-      const generate = await less.render(contents.toString())
-      const { css } = await generate
-      return css
+   minify (contents) {
+      return minify(contents).code
+   },
+
+   sass (contents) {
+      let result = sass.renderSync({
+         data: contents.toString(),
+         indentedSyntax: true
+      })
+      return result.css
    }
 }
 
@@ -44,11 +47,11 @@ const configuration = {
       },
 
       "build:css": {
-         watch: "app/src/less/",
-         src: "app/src/less/main.less",
+         watch: "app/src/sass/",
+         src: "app/src/sass/main.sass",
          rename: "main.css",
          dest: "app/dist/",
-         transforms: [t.less]
+         transforms: [t.sass]
       },
 
       "build": {
