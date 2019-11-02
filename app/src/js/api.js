@@ -1,8 +1,8 @@
-import data from "./data"
+import store from "./store"
 
 let api = {
    async show (id, tracked, seasonAt=0, episodeAt=0, time=0) {
-      let cached = data.tracked.find(({data}) => data.id === id)
+      let cached = store.state.tracked.find(({data}) => data.id === id)
       if (cached)
          return cached
 

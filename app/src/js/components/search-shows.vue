@@ -1,5 +1,5 @@
 <template>
-   <section id="tracked-shows">
+   <section id="search-shows">
       <input v-model="input" @input="" @keydown.enter="search(input)" ref="el" placeholder="Search">
       <show-list :shows="results"></show-list>
    </section>
@@ -8,15 +8,13 @@
 
 <script>
 import api from "../api"
-import data from "../data"
 import ShowList from "./show-list.vue"
 
 export default {
-   data: () => data,
-
-   components: {
-      "show-list": ShowList
-   },
+   data: () => ({
+      input: "",
+      results: []
+   }),
 
    methods: {
       async search (input) {
@@ -26,6 +24,10 @@ export default {
 
    activated () {
       this.$refs.el.focus()
+   },
+
+   components: {
+      "show-list": ShowList
    }
 }
 </script>

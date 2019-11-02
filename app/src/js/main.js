@@ -1,12 +1,13 @@
 import Vue from "vue"
 import App from "./components/App.vue"
 import api from "./api"
-import data from "./data"
+import store from "./store"
 
 
 new Vue({
    el: "#app",
    render: h => h(App),
+   store,
    components: {
       App
    }
@@ -32,7 +33,7 @@ async function init () {
    }]
    shows = shows.map(({id, season, episode, time}) => api.show(id, true, season, episode, time))
    shows = await Promise.all(shows)
-   data.tracked = shows
+   store.commit("set", {tracked: shows})
 }
 
 init()

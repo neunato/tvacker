@@ -27,9 +27,18 @@
 
 
 <script>
-import data from "../data"
-
 export default {
+   computed: {
+      show: {
+         get () { return this.$store.state.show },
+         set (x) { this.$store.commit("set", {show: x}) }
+      },
+      tracked: {
+         get () { return this.$store.state.tracked },
+         set (x) { this.$store.commit("set", {tracked: x}) }
+      }
+   },
+
    methods: {
       watch (show, season, episode) {
          if (!show.tracked)
@@ -49,6 +58,7 @@ export default {
             show.tracked = true
             show.time = Date.now()
             this.tracked.push(show)
+            // this.tracked = [...this.tracked, show]
          }
       }
    },
@@ -58,8 +68,6 @@ export default {
          if (e.key === "Escape" && this.show)
             this.show = null
       })
-   },
-
-   data: () => data
+   }
 }
 </script>

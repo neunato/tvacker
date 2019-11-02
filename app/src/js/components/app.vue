@@ -15,13 +15,15 @@
 
 
 <script>
-import data from "../data"
 import ShowPreview from "./show-preview.vue"
 import TrackedShows from "./tracked-shows.vue"
 import SearchShows from "./search-shows.vue"
 
 export default {
-   data: () => data,
+   data: () => ({
+      tab: "tracked-shows"
+   }),
+
    components: {
       "show-preview": ShowPreview,
       "tracked-shows": TrackedShows,

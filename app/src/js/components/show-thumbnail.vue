@@ -1,5 +1,5 @@
 <template>
-   <div class="show-thumbnail" @click="dddata.show = show">
+   <div class="show-thumbnail" @click="openShow(show)">
       <img class="show-image" :src="show.data.image.small">
       <div class="show-details">
          <p class="title">{{show.data.title}}</p>
@@ -13,20 +13,11 @@
 
 
 <script>
-import data from "../data"
 import ProgressRing from "./progress-ring.vue"
 
 export default {
    props: {
-      show: Object
-   },
-
-   data: () => ({
-      dddata: data
-   }),
-
-   components: {
-      "progress-ring": ProgressRing
+      show: Object,
    },
 
    computed: {
@@ -46,6 +37,16 @@ export default {
          }
          return watched / total * 100
       }
+   },
+
+   methods: {
+      openShow (show) {
+         this.$store.commit("set", {show})
+      }
+   },
+
+   components: {
+      "progress-ring": ProgressRing
    }
 }
 </script>
