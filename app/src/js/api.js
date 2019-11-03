@@ -15,7 +15,7 @@ let api = {
       if (type === "Animation")
          genres = [type, ...genres]
       let genre = genres.join(", ") || type
-      let years = premiered.slice(0, 4) + "-"
+      let years = premiered ? (premiered.slice(0, 4) + "-") : "-"
       if (status === "Ended")
          years += episodes[episodes.length - 1].airdate.slice(0, 4)
       image = {
