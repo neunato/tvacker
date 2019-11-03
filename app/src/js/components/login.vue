@@ -2,26 +2,28 @@
    <section id="login">
       <input type="text" v-model="email" @input="" @keydown.enter="" placeholder="Email" ref="email">
       <input type="password" v-model="password" @input="" @keydown.enter="" placeholder="Password" ref="password">
-      <div class="submit-button" @click="user={email, password}; email=''; password=''"><p>Submit</p></div>
+      <div class="submit-button" @click="login"><p>Enter</p></div>
    </section>
 </template>
 
 
 <script>
-import ShowList from "./show-list.vue"
-import TrackedShows from "./tracked-shows.vue"
-
 export default {
    data: () => ({
       email: "",
       password: ""
    }),
 
-   computed: {
-      user: {
-         // get () { return this.$store.state.user },
-         set (x) { this.$store.commit("set", {user: x, component: TrackedShows}) }
-      }   
+   methods: {
+      async login () {
+         let payload = {
+            email: this.email,
+            password: this.password
+         }
+         await this.$store.dispatch("login", payload)
+         this.email = ""
+         this.password = ""
+      }
    },
 
    activated () {

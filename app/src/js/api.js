@@ -1,11 +1,7 @@
 import store from "./store"
 
 let api = {
-   async show (id, tracked, seasonAt=0, episodeAt=0, time=0) {
-      let cached = store.state.tracked.find(({data}) => data.id === id)
-      if (cached)
-         return cached
-
+   async show (id) {
       let show = await this.get("http://api.tvmaze.com/shows/" + id + "?embed=episodes")
       let episodes = show._embedded.episodes
       let seasons = []
@@ -26,18 +22,12 @@ let api = {
       }
 
       return {
-         season: seasonAt,
-         episode: episodeAt,
-         time,
-         tracked,
-         data: {
-            id,
-            title,
-            genre,
-            years,
-            image,
-            seasons
-         }
+         id,
+         title,
+         genre,
+         years,
+         image,
+         seasons
       }
    },
 
@@ -46,7 +36,7 @@ let api = {
       shows = shows.map(({show}) => show)
       shows = shows.filter(({weight, status}) => weight > 0 && ["Running", "Ended", "To Be Determined"].includes(status))
       shows = shows.sort(({score: a}, {score: b}) => b - a)
-      shows = shows.map(({id}) => api.show(id, false))
+      shows = shows.map(({id}) => api.show(id))
       return Promise.all(shows)
    },
 

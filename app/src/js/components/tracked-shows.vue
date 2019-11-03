@@ -1,6 +1,6 @@
 <template>
    <section id="tracked-shows">
-      <show-list :shows="sortedShows"></show-list>
+      <show-list :shows="shows"></show-list>
    </section>
 </template>
 
@@ -10,12 +10,8 @@ import ShowList from "./show-list.vue"
 
 export default {
    computed: {
-      tracked () {
-         return this.$store.state.tracked
-      },
-
-      sortedShows () {
-         let shows = [...this.tracked]
+      shows () {
+         let shows = [...this.$store.state.shows]
          shows.sort((a, b) => {
             let watched1 = this.completed(a)
             let watched2 = this.completed(b)
@@ -24,7 +20,7 @@ export default {
             if (watched1)                  // Both are entirely watched, sort by title.
                return a.data.title.localeCompare(b.data.title)
             else                           // Neither are entirely watched, sort by last edited.
-               return b.time - a.time
+               return b.timestamp - a.timestamp
 
          })
          return shows
@@ -34,7 +30,7 @@ export default {
    methods: {
       completed (show) {
          let seasons = show.data.seasons
-         return show.season === seasons.length && show.episode === seasons[seasons.length - 1]
+         return show.watched.season === seasons.length && show.watched.episode === seasons[seasons.length - 1]
       }
    },
 

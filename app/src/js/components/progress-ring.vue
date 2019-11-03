@@ -34,7 +34,7 @@ export default {
    },
    computed: {
       shortProgress () {
-         return Math.round(this.progress * 100) / 100
+         return Math.floor(this.progress * 100) / 100
       },
       normalisedRadius () {
          return this.radius - this.stroke * 2

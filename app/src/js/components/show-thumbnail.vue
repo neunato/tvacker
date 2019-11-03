@@ -5,7 +5,7 @@
          <p class="title">{{show.data.title}}</p>
          <p class="years">{{show.data.years}}</p>
          <p class="genre">{{show.data.genre}}</p>
-         <progress-ring v-if="show.tracked" :radius="40" :progress="progress" :stroke="4"></progress-ring>
+         <progress-ring v-if="tracked" :radius="40" :progress="progress" :stroke="4"></progress-ring>
          <div class="label" v-else><p>UNTRACKED</p></div>
       </div>
    </div>
@@ -21,19 +21,26 @@ export default {
    },
 
    computed: {
+      tracked () {
+         let id = this.show.data.id
+         let tracked = this.$store.state.shows
+         return tracked.some(({data}) => data.id === id)
+      },
+
       progress () {
+         let show = this.show
          let total = 0
          let watched = 0
-         let seasonAt = this.show.season - 1
-         let episodeAt = this.show.episode - 1
-         let seasons = this.show.data.seasons
-         for (let i=0, n=seasons.length; i<n; i++) {
-            let count = seasons[i]
+         let seasonAt = show.watched.season
+         let episodeAt = show.watched.episode
+         let seasons = show.data.seasons
+         for (let i=1, n=seasons.length; i<=n; i++) {
+            let count = seasons[i - 1]
             total += count
             if (i < seasonAt)
                watched += count
             else if (i === seasonAt)
-               watched += episodeAt + 1
+               watched += episodeAt
          }
          return watched / total * 100
       }

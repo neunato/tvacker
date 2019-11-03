@@ -16,7 +16,7 @@ const t = {
          vue(),
          resolve(),
          commonjs(),
-         //babel({presets: [["@babel/env", {targets: {ie: "11"}}]]}),
+         // babel({presets: [["@babel/env", {targets: {ie: "11"}}]]}),
       ]})
       const { output } = await bundle.generate({ format: "iife" })
       const { code } = output[0]

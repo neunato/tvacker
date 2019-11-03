@@ -33,6 +33,7 @@ input
    padding: 0 15px
    border: 1px solid $colour-lightgray
    border-radius: 20px
+   box-shadow: 0 0 0 100px #ffffff inset !important    /* disable autocomplete background */
 
    &:focus
       border-color: $colour-gray
@@ -44,6 +45,21 @@ body
    color: $colour-gray
    line-height: 1.5
    cursor: default
+
+#app.loading::before
+   content: ""
+   position: fixed
+   width: 100%
+   height: 100%
+   background-color: rgba(255,255,255,0.5)
+   cursor: wait
+   z-index: 10
+
+#app.loading:empty::before
+   content: "Loading..."
+   display: flex
+   justify-content: center
+   align-items: center
 
 main,
 #show-preview
@@ -87,7 +103,7 @@ header
 #search-shows
    position: relative
    min-height: 100%
-   padding: ($nav-height + $padding-main*2) $padding-main
+   padding: $padding-main*2 $padding-main ($nav-height + $padding-main*2)
 
    &::after
       content: ""

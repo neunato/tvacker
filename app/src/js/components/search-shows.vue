@@ -18,7 +18,17 @@ export default {
 
    methods: {
       async search (input) {
-         this.results = await api.search(input)
+         let tracked = this.$store.state.shows
+         let shows = await api.search(input)
+         shows = shows.map((data) => tracked.find((show) => data.id === show.data.id) || {
+            timestamp: null,
+            watched: {
+               season: null,
+               episode: null
+            },
+            data
+         })
+         this.results = shows
       }
    },
 

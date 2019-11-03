@@ -1,8 +1,8 @@
 <template>
-   <div id="app">
+   <div id="app" :class="{loading}">
       <main>
          <header>
-            <div v-if="user" class="logout-button" @click="user=null">log out</div>
+            <div v-if="user" class="logout-button" @click="logout">log out</div>
             <nav>
                <span v-for="{component: comp, label} in tabs" @click="component=comp" :class="{selected: component===comp}">{{label}}</span>
             </nav>
@@ -11,7 +11,7 @@
             <component :is="component"></component>
          </keep-alive>
       </main>
-      <show-preview></show-preview>
+      <show-preview v-if="show" :show="show"></show-preview>
    </div>
 </template>
 
@@ -25,14 +25,24 @@ import Register from "./register.vue"
 
 export default {
    computed: {
+      show: {
+         get () { return this.$store.state.show },
+         // set (x) { this.$store.commit("set", {show: x}) }
+      },
+
       user: {
          get () { return this.$store.state.user },
-         set (x) { this.$store.commit("set", {user: x, component: Login}) }
+         // set (x) { this.$store.commit("set", {user: x, component: Login}) }
       },
 
       component: {
          get () { return this.$store.state.component },
          set (x) { this.$store.commit("set", {component: x}) }
+      },
+
+      loading: {
+         get () { return this.$store.state.loading },
+         // set (x) { this.$store.commit("set", {loading: x}) }
       },
 
       tabs () {
@@ -46,6 +56,12 @@ export default {
                {component: Login, label: "Log in"},
                {component: Register, label: "Sign up"}
             ]
+      }
+   },
+
+   methods: {
+      logout () {
+         this.$store.dispatch("logout")
       }
    },
 
