@@ -4,9 +4,11 @@ let api = {
    async show (id) {
       let show = await this.get("http://api.tvmaze.com/shows/" + id + "?embed=episodes")
       let episodes = show._embedded.episodes
-      let seasons = []
+
+      let seasons = new Map()
       for (let {season, number} of episodes)
-         seasons[season - 1] = number
+         seasons.set(season, number)
+      seasons = [...seasons].map(([season, length]) => ({season, length}))
 
       let {name, genres, premiered, type, status, image} = show
       let title = name

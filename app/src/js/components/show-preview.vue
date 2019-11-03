@@ -11,9 +11,9 @@
          </div>
          <div class="show-episodes">
             <table>
-               <tr v-for="n, i in show.data.seasons">
-                  <td class="season" :class="{watched: isWatched(show, i+1)}">{{i + 1}}</td>
-                  <td v-for="_, j in n" class="episode" :class="{watched: isWatched(show, i+1, j+1)}" @click="watchEpisode(show, i+1, j+1)">{{j + 1}}</td>
+               <tr v-for="{season, length} in show.data.seasons">
+                  <td class="season" :class="{watched: isWatched(show, season)}">{{season}}</td>
+                  <td v-for="_, i in length" class="episode" :class="{watched: isWatched(show, season, i+1)}" @click="watchEpisode(show, season, i+1)">{{i + 1}}</td>
                </tr>
                <tr class="invisible"><td v-for="i in 11"></td></tr>
             </table>

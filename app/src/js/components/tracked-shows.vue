@@ -29,8 +29,11 @@ export default {
 
    methods: {
       completed (show) {
+         let seasonAt = show.watched.season
+         let episodeAt = show.watched.episode
          let seasons = show.data.seasons
-         return show.watched.season === seasons.length && show.watched.episode === seasons[seasons.length - 1]
+         let [season, episode] = seasons[seasons.length - 1]
+         return seasonAt === season && episodeAt === episode
       }
    },
 

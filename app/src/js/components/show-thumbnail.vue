@@ -34,12 +34,11 @@ export default {
          let seasonAt = show.watched.season
          let episodeAt = show.watched.episode
          let seasons = show.data.seasons
-         for (let i=1, n=seasons.length; i<=n; i++) {
-            let count = seasons[i - 1]
-            total += count
-            if (i < seasonAt)
-               watched += count
-            else if (i === seasonAt)
+         for (let {season, length} of seasons) {
+            total += length
+            if (season < seasonAt)
+               watched += length
+            else if (season === seasonAt)
                watched += episodeAt
          }
          return watched / total * 100
