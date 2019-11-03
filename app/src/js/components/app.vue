@@ -4,11 +4,11 @@
          <header>
             <div v-if="user" class="logout-button" @click="logout">log out</div>
             <nav>
-               <span v-for="{component: comp, label} in tabs" @click="component=comp" :class="{selected: component===comp}">{{label}}</span>
+               <span v-for="t in tabs" @click="tab=t" :class="{selected: t===tab}">{{t.label}}</span>
             </nav>
          </header>
          <keep-alive>
-            <component :is="component"></component>
+            <component :is="tab.component"></component>
          </keep-alive>
       </main>
       <show-preview v-if="show" :show="show"></show-preview>
@@ -24,38 +24,37 @@ import Login from "./login.vue"
 import Register from "./register.vue"
 
 export default {
+   data: () => ({
+      tab: "",
+      tabs: []
+   }),
+
    computed: {
-      show: {
-         get () { return this.$store.state.show },
-         // set (x) { this.$store.commit("set", {show: x}) }
-      },
+      show () { return this.$store.state.show },
+      shows () { return this.$store.state.shows },
+      user () { return this.$store.state.user },
+      loading () { return this.$store.state.loading }
+   },
 
+   watch: {
       user: {
-         get () { return this.$store.state.user },
-         // set (x) { this.$store.commit("set", {user: x, component: Login}) }
-      },
-
-      component: {
-         get () { return this.$store.state.component },
-         set (x) { this.$store.commit("set", {component: x}) }
-      },
-
-      loading: {
-         get () { return this.$store.state.loading },
-         // set (x) { this.$store.commit("set", {loading: x}) }
-      },
-
-      tabs () {
-         if (this.user)
-            return [
-               {component: TrackedShows, label: "Tracked"},
-               {component: SearchShows, label: "Search"}
-            ]
-         else
-            return [
-               {component: Login, label: "Log in"},
-               {component: Register, label: "Sign up"}
-            ]
+         immediate: true,
+         handler (user) {
+            if (user) {
+               this.tabs = [
+                  {component: 'tracked-shows', label: "Tracked"},
+                  {component: 'search-shows', label: "Search"}
+               ]
+               this.tab = this.tabs[Number(this.shows.length === 0)]
+            }
+            else {
+               this.tabs = [
+                  {component: 'login', label: "Log in"},
+                  {component: 'register', label: "Sign up"}
+               ]
+               this.tab = this.tabs[0]
+            }
+         }
       }
    },
 

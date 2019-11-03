@@ -2,14 +2,11 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import db from './db'
 import api from './api'
-import Login from "./components/login.vue"
-import TrackedShows from "./components/tracked-shows.vue"
 
 Vue.use(Vuex)
 
 let store = new Vuex.Store({
    state: {
-      component: Login,
       user: null,          // user email
       shows: [],           // tracked shows - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
       show: null,          // open show     -  {id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}
@@ -46,13 +43,13 @@ let store = new Vuex.Store({
          })
          shows = await Promise.all(shows)
 
-         commit("set", {loading: false, user: email, shows, component: TrackedShows})
+         commit("set", {loading: false, user: email, shows})
       },
 
       async logout ({commit}) {
          commit("set", {loading: true})
          await db.logout()
-         commit("set", {loading: false, user: null, component: Login})
+         commit("set", {loading: false, user: null})
       },
 
       async trackShow ({commit, state}, {show}) {

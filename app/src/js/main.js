@@ -11,10 +11,10 @@ import db from "./db"
 
    new Vue({
       el: "#app",
-      render: h => h(App),
       store,
+      render: (h) => h(App),
       components: {
-         App
+         "app": App
       }
    })
 })()
