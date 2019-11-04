@@ -1,3 +1,4 @@
+import ExpectedError from './error'
 import api from "./api"
 
 let config = {
@@ -26,37 +27,33 @@ let db = {
       try {
          await auth.createUserWithEmailAndPassword(email, password)
       }
-      catch ({code}) {
+      catch (e) {
+         let code = e.code
          if (code === "auth/email-already-in-use")
-            throw new Error("Email already in use")
+            throw new ExpectedError("Email already in use")
          if (code === "auth/invalid-email")
-            throw new Error("Email not valid")
+            throw new ExpectedError("Email not valid")
          if (code === "auth/weak-password")
-            throw new Error("Password too weak")
-         throw new Error("Something went wrong")
+            throw new ExpectedError("Password too weak")
+         throw e
       }
 
       try {
          await auth.currentUser.sendEmailVerification()
       }
       catch (e) {
-         throw new Error("Failed to send email")
+         throw new ExpectedError("Sending email failed")
       }
    },
 
    async login (email, password) {
-      try {
-         await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      }
-      catch (e) {
-         throw new Error("Something went wrong")
-      }
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 
       try {
          await auth.signInWithEmailAndPassword(email, password)
       }
       catch (e) {
-         throw new Error("Invalid email or password")
+         throw new ExpectedError("Invalid email or password")
       }
    },
 
@@ -65,7 +62,7 @@ let db = {
          await auth.signOut()
       }
       catch (e) {
-         throw new Error("Something went wrong")
+         throw new ExpectedError("Logging out failed")
       }
    },
 
@@ -76,7 +73,7 @@ let db = {
          return shows
       }
       catch (e) {
-         throw new Error("Something went wrong")
+         throw new ExpectedError("Fetching data failed")
       }
    },
 
@@ -86,7 +83,7 @@ let db = {
          await firestore.collection("shows").doc(String(show.id)).set(show)
       }
       catch (e) {
-         throw new Error("Something went wrong")
+         throw new ExpectedError("Pushing data failed")
       }
    },
 
@@ -95,7 +92,7 @@ let db = {
          await firestore.collection("shows").doc(String(id)).delete()
       }
       catch (e) {
-         throw new Error("Something went wrong")
+         throw new ExpectedError("Pushing data failed")
       }
    }
 }

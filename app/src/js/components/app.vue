@@ -12,6 +12,7 @@
          </keep-alive>
       </main>
       <show-preview v-if="show" :show="show"></show-preview>
+      <message v-if="message" :message="message"></message>
    </div>
 </template>
 
@@ -22,6 +23,7 @@ import TrackedShows from "./tracked-shows.vue"
 import SearchShows from "./search-shows.vue"
 import Login from "./login.vue"
 import Register from "./register.vue"
+import Message from "./message.vue"
 
 export default {
    data: () => ({
@@ -33,7 +35,8 @@ export default {
       show () { return this.$store.state.show },
       shows () { return this.$store.state.shows },
       user () { return this.$store.state.user },
-      loading () { return this.$store.state.loading }
+      loading () { return this.$store.state.loading },
+      message () { return this.$store.state.message }
    },
 
    watch: {
@@ -69,7 +72,8 @@ export default {
       "tracked-shows": TrackedShows,
       "search-shows": SearchShows,
       "login": Login,
-      "register": Register
+      "register": Register,
+      "message": Message
    }
 }
 </script>
