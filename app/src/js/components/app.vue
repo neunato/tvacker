@@ -1,5 +1,5 @@
 <template>
-   <div id="app" :class="{loading}">
+   <div id="app" :class="{loading, suspended}">
       <main>
          <header>
             <div v-if="user" class="logout-button" @click="logout">log out</div>
@@ -36,6 +36,7 @@ export default {
       shows () { return this.$store.state.shows },
       user () { return this.$store.state.user },
       loading () { return this.$store.state.loading },
+      suspended () { return this.$store.state.suspended },
       message () { return this.$store.state.message }
    },
 

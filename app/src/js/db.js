@@ -1,4 +1,4 @@
-import ExpectedError from './error'
+import ExpectedError from "./error"
 import api from "./api"
 
 let config = {

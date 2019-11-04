@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import db from './db'
-import api from './api'
+import Vue from "vue"
+import Vuex from "vuex"
+import db from "./db"
+import api from "./api"
 
 Vue.use(Vuex)
 
@@ -13,6 +13,7 @@ let store = new Vuex.Store({
       shows: [],           // tracked shows - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
       show: null,          // open show     -  {id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}
       loading: false,
+      suspended: false,
       message: null
    },
 
@@ -21,8 +22,6 @@ let store = new Vuex.Store({
          let props = Object.keys(object)
          for (let prop of props)
             state[prop] = object[prop]
-         if (object.hasOwnProperty("message"))
-            stamp++
       }
    },
 
@@ -100,13 +99,13 @@ let store = new Vuex.Store({
          commit("set", {show: null})
       },
 
-      showMessage ({commit}, {message, duration=3000}) {
+      async showMessage ({commit}, {message, duration=3000}) {
+         stamp++
          let id = stamp
          commit("set", {message, loading: false})
-         window.setTimeout(() => {
-            if (id === stamp)
-               commit("set", {message: null})
-         }, duration)
+         await sleep(duration)
+         if (id === stamp)
+            commit("set", {message: null})
       }
    }
 })

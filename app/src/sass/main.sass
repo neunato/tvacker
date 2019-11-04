@@ -121,6 +121,10 @@ header
       max-width: $main-width
       margin: 0 auto 35px
 
+.suspended #search-shows input
+   color: rgba(0,0,0,.4)
+   cursor: not-allowed
+
 .show-list
    ul
       max-width: $main-width
@@ -319,8 +323,9 @@ header
 /* MESSAGE */
 #message
    position: fixed
-   width: 100%
    bottom: 10px
+   width: 100%
+   padding: 0 20px
    text-align: center
    z-index: 10
 

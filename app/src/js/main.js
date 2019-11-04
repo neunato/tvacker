@@ -1,17 +1,31 @@
 import Vue from "vue"
 import App from "./components/App.vue"
-import ExpectedError from './error'
+import ExpectedError from "./error"
 import api from "./api"
 import store from "./store"
 import db from "./db"
+import "./globals"
 
-Vue.config.errorHandler = (error) => {
-   let message
-   if (error instanceof ExpectedError)
-      message = error.message
-   else
-      message = "Something went wrong"
-   store.dispatch("showMessage", {message})
+Vue.config.errorHandler = async (error) => {
+   if (!(error instanceof ExpectedError)) {
+      store.dispatch("showMessage", {message: "Something went wrong"})
+      return
+   }
+
+   if (error.silent) {
+      return
+   }
+
+   let message = error.message
+
+   if (error.suspend) {
+      store.commit("set", {suspended: true})
+      await store.dispatch("showMessage", {message, duration: error.suspend})
+      store.commit("set", {suspended: false})
+   }
+   else {
+      store.dispatch("showMessage", {message})
+   }
 }
 
 (async () => {

@@ -1,6 +1,6 @@
 <template>
    <section id="search-shows">
-      <input v-model="input" @input="search(input, 200)" @keydown.enter="search(input)" ref="el" placeholder="Search">
+      <input v-model="input" @input="search(input, 200)" @keydown.enter="search(input)" ref="el" placeholder="Search" :disabled="suspended">
       <show-list :shows="results"></show-list>
    </section>
 </template>
@@ -17,26 +17,42 @@ export default {
       stamp: 0
    }),
 
+   computed: {
+      suspended () { return this.$store.state.suspended }
+   },
+
    methods: {
-      search (input, delay=0) {
+      async search (input, delay=0) {
          this.stamp++
          let stamp = this.stamp
-         window.setTimeout(async () => {
-            if (stamp !== this.stamp)
-               return
 
-            let tracked = this.$store.state.shows
-            let shows = await api.search(input)
-            shows = shows.map((data) => tracked.find((show) => data.id === show.data.id) || {
-               timestamp: null,
-               watched: {
-                  season: null,
-                  episode: null
-               },
-               data
-            })
-            this.results = shows
-         }, delay)
+         await sleep(delay)
+
+         if (stamp !== this.stamp)
+            return
+
+         let tracked = this.$store.state.shows
+         let shows
+
+         try {
+            shows = await api.search(input)
+         }
+         catch (e) {
+            this.results = []
+            if (e.suspend)
+               setTimeout(() => { this.search(this.input) }, e.suspend)
+            throw e
+         }
+
+         shows = shows.map((data) => tracked.find((show) => data.id === show.data.id) || {
+            timestamp: null,
+            watched: {
+               season: null,
+               episode: null
+            },
+            data
+         })
+         this.results = shows
       }
    },
 
