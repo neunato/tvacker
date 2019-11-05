@@ -8,43 +8,69 @@
 
 <script>
 import api from "../api"
+import ExpectedError from "../error"
 import ShowList from "./show-list.vue"
 
 export default {
    data: () => ({
       input: "",
-      results: [],
       stamp: 0
    }),
 
    computed: {
+      results () { return this.$store.state.results },
+      tracked () { return this.$store.state.shows },
       suspended () { return this.$store.state.suspended }
    },
 
    methods: {
       async search (input, delay=0) {
+         let store = this.$store
+
          this.stamp++
          let stamp = this.stamp
 
-         await sleep(delay)
+         if (delay)
+            await sleep(delay)
 
          if (stamp !== this.stamp)
             return
 
-         let tracked = this.$store.state.shows
          let shows
-
          try {
             shows = await api.search(input)
          }
          catch (e) {
-            this.results = []
-            if (e.suspend)
-               setTimeout(() => { this.search(this.input) }, e.suspend)
-            throw e
+            store.dispatch("setSearchResults", {results: []})
+
+            if (!e.suspend)
+               throw e
+
+            store.dispatch("suspendShowAPI")
+            store.dispatch("showMessage", {message:e.message, duration: Infinity})
+
+            let retries = 3
+            while (retries > 0) {
+               try {
+                  await sleep(5000)
+                  shows = await api.search(input)
+                  break
+               }
+               catch (e) {
+                  retries--
+               }
+            }
+
+            store.dispatch("unsuspendShowAPI")
+            store.dispatch("hideMessage")
+
+            if (!retries) {
+               this.input = ""
+               throw new ExpectedError("Fetching data failed")
+            }
          }
 
-         shows = shows.map((data) => tracked.find((show) => data.id === show.data.id) || {
+         shows = shows.map((data) => this.tracked.find((show) => data.id === show.data.id) || {
             timestamp: null,
             watched: {
                season: null,
@@ -52,7 +78,8 @@ export default {
             },
             data
          })
-         this.results = shows
+
+         store.dispatch("setSearchResults", {results: shows})
       }
    },
 

@@ -10,10 +10,11 @@ let stamp = 0
 let store = new Vuex.Store({
    state: {
       user: null,          // user email
-      shows: [],           // tracked shows - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
-      show: null,          // open show     -  {id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}
+      shows: [],           // tracked shows  - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
+      results: [],         // searched shows - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
+      show: null,          // open show      -  {id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}
       loading: false,
-      suspended: false,
+      suspended: false,    // disables requests to tvmaze api
       message: null
    },
 
@@ -53,7 +54,7 @@ let store = new Vuex.Store({
       async logout ({commit}) {
          commit("set", {loading: true})
          await db.logout()
-         commit("set", {loading: false, user: null})
+         commit("set", {loading: false, user: null, shows: [], results: [], show: null, suspended: false, message: null})
       },
 
       async trackShow ({commit, state}, {show}) {
@@ -99,13 +100,31 @@ let store = new Vuex.Store({
          commit("set", {show: null})
       },
 
+      setSearchResults ({commit}, {results}) {
+         commit("set", {results})
+      },
+
+      suspendShowAPI ({commit}) {
+         commit("set", {suspended: true})
+      },
+
+      unsuspendShowAPI ({commit}) {
+         commit("set", {suspended: false})
+      },
+
       async showMessage ({commit}, {message, duration=3000}) {
          stamp++
          let id = stamp
          commit("set", {message, loading: false})
+         if (duration === Infinity)
+            return
          await sleep(duration)
          if (id === stamp)
             commit("set", {message: null})
+      },
+
+      hideMessage ({commit}) {
+         commit("set", {message: null})
       }
    }
 })

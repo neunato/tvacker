@@ -47,7 +47,7 @@ export default {
 
    methods: {
       openShow (show) {
-         this.$store.commit("set", {show})
+         this.$store.dispatch("openShow", {show})
       }
    },
 

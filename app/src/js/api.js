@@ -1,11 +1,7 @@
 import ExpectedError from "./error"
-import store from "./store"
 
 let api = {
    async show (id) {
-      if (store.state.suspended)
-         throw new ExpectedError("", {silent: true})
-
       let show = await this.get("https://api.tvmaze.com/shows/" + id + "?embed=episodes")
       let episodes = show._embedded.episodes
 
@@ -38,9 +34,6 @@ let api = {
    },
 
    async search (query) {
-      if (store.state.suspended)
-         throw new ExpectedError("", {silent: true})
-
       let shows = await this.get("https://api.tvmaze.com/search/shows?q=" + query)
       shows = shows.map(({show}) => show)
       shows = shows.filter(({weight, status}) => weight > 0 && ["Running", "Ended", "To Be Determined"].includes(status))
@@ -52,7 +45,7 @@ let api = {
    async get (url) {
       let response = await fetch(url)
       if (response.status === 429)
-         throw new ExpectedError("Too many requests, take it easy", {suspend: 5000})
+         throw new ExpectedError("Too many requests, take it easy", {suspend: true})
       if (!response.ok)
          throw new Error("Request failed")
       let json = await response.json()

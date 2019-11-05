@@ -53,8 +53,11 @@ export default {
       },
 
       watchEpisode (show, season, episode) {
-         if (this.tracked)
-            this.$store.dispatch("watchEpisode", {show, season, episode})
+         if (!this.tracked)
+            return
+         if (season === show.watched.season && episode === show.watched.episode)
+            return
+         this.$store.dispatch("watchEpisode", {show, season, episode})
       },
 
       isWatched (show, season, episode=null) {
