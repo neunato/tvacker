@@ -8,6 +8,8 @@
 
 
 <script>
+import {handleError} from "../error"
+
 export default {
    data: () => ({
       email: "",
@@ -16,13 +18,19 @@ export default {
 
    methods: {
       async login () {
-         let payload = {
-            email: this.email,
-            password: this.password
+         try {
+            let store = this.$store
+            let payload = {
+               email: this.email,
+               password: this.password
+            }
+            await store.dispatch("login", payload)
+            this.email = ""
+            this.password = ""
          }
-         await this.$store.dispatch("login", payload)
-         this.email = ""
-         this.password = ""
+         catch (error) {
+            handleError(error)
+         }
       }
    },
 

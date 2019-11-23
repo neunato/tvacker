@@ -1,29 +1,22 @@
 import Vue from "vue"
 import App from "./components/app.vue"
-import ExpectedError from "./error"
 import api from "./api"
 import store from "./store"
 import db from "./db"
+import {logError} from "./error"
 import "./globals"
 
-Vue.config.errorHandler = async (error) => {
-console.log(error)
-   if (error.silent)
-      return
-
-   let message
-   if (error instanceof ExpectedError)
-      message = error.message
-   else
-      message = "Something went wrong"
-
-   store.dispatch("showMessage", {message})
-}
+// A ridiculous behaviour disallows .errorHandler = f or even .errorHandler = (e) => f(e) without curly braces.
+Vue.config.errorHandler = (error) => {logError(error)}
 
 (async () => {
+   // HMM, SHOULD WE CATCH AND SILENT THIS ONE? PROBABLY YES
    let user = await db.init()
-   if (user)
-      await store.dispatch("login", {email: user, local: true})
+   if (user) {
+      let email = user
+      let local = true
+      await store.dispatch("login", {email, local})
+   }
 
    new Vue({
       el: "#app",

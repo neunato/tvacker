@@ -32,8 +32,8 @@ export default {
          let seasonAt = show.watched.season
          let episodeAt = show.watched.episode
          let seasons = show.data.seasons
-         let [season, episode] = seasons[seasons.length - 1]
-         return seasonAt === season && episodeAt === episode
+         let {season, length} = seasons[seasons.length - 1]
+         return seasonAt === season && episodeAt === length
       }
    },
 

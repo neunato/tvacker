@@ -24,6 +24,7 @@ import SearchShows from "./search-shows.vue"
 import Login from "./login.vue"
 import Register from "./register.vue"
 import Message from "./message.vue"
+import {handleError} from "../error"
 
 export default {
    data: () => ({
@@ -63,8 +64,14 @@ export default {
    },
 
    methods: {
-      logout () {
-         this.$store.dispatch("logout")
+      async logout () {
+         try {
+            let store = this.$store
+            await store.dispatch("logout")
+         }
+         catch (error) {
+            handleError(error)
+         }
       }
    },
 

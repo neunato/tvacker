@@ -1,5 +1,6 @@
-import ExpectedError from "./error"
 import api from "./api"
+import {FirebaseError} from "./error"
+import {logError} from "./error"
 
 let config = {
    apiKey: "AIzaSyAXFYQfaQPXY1M9-SD6Cfe2FS0hRTCgCN8",
@@ -30,11 +31,11 @@ let db = {
       catch (e) {
          let code = e.code
          if (code === "auth/email-already-in-use")
-            throw new ExpectedError("Email already in use")
+            throw new FirebaseError("Email already in use")
          if (code === "auth/invalid-email")
-            throw new ExpectedError("Email not valid")
+            throw new FirebaseError("Email not valid")
          if (code === "auth/weak-password")
-            throw new ExpectedError("Password too weak")
+            throw new FirebaseError("Password too weak")
          throw e
       }
 
@@ -42,7 +43,7 @@ let db = {
          await auth.currentUser.sendEmailVerification()
       }
       catch (e) {
-         throw new ExpectedError("Sending email failed")
+         throw new FirebaseError("Sending email failed")
       }
    },
 
@@ -53,7 +54,7 @@ let db = {
          await auth.signInWithEmailAndPassword(email, password)
       }
       catch (e) {
-         throw new ExpectedError("Invalid email or password")
+         throw new FirebaseError("Invalid email or password")
       }
    },
 
@@ -62,7 +63,7 @@ let db = {
          await auth.signOut()
       }
       catch (e) {
-         throw new ExpectedError("Logging out failed")
+         throw new FirebaseError("Logging out failed")
       }
    },
 
@@ -73,7 +74,7 @@ let db = {
          return shows
       }
       catch (e) {
-         throw new ExpectedError("Fetching data failed")
+         throw new FirebaseError("Fetching data failed")
       }
    },
 
@@ -83,7 +84,7 @@ let db = {
          await firestore.collection("shows").doc(String(show.id)).set(show)
       }
       catch (e) {
-         throw new ExpectedError("Pushing data failed")
+         throw new FirebaseError("Pushing data failed")
       }
    },
 
@@ -92,9 +93,20 @@ let db = {
          await firestore.collection("shows").doc(String(id)).delete()
       }
       catch (e) {
-         throw new ExpectedError("Pushing data failed")
+         throw new FirebaseError("Pushing data failed")
+      }
+   },
+
+   async pushError (error) {
+      try {
+         await firestore.collection("errors").add(error)
+      }
+      catch (e) {
+         firestore.collection("errors").add(error)  // Retry logging the error.
+         logError(e)                                // Log the error that occurred while logging the other error.
       }
    }
+
 }
 
 export default db

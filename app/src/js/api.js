@@ -1,10 +1,15 @@
-import ExpectedError from "./error"
+import {TvMazeError} from "./error"
+import {TvMazeOverloadError} from "./error"
+import {TvMazeFetchError} from "./error"
+import {logError} from "./error"
+import db from "./db"
+
 
 let api = {
-   async show (id) {
-      let show = await this.get("https://api.tvmaze.com/shows/" + id + "?embed=episodes")
-      let episodes = show._embedded.episodes
 
+   async show (id) {
+      let show = await get("https://api.tvmaze.com/shows/" + id + "?embed=episodes")
+      let episodes = show._embedded.episodes
       let seasons = new Map()
       for (let {season, number} of episodes)
          seasons.set(season, number)
@@ -34,23 +39,45 @@ let api = {
    },
 
    async search (query) {
-      let shows = await this.get("https://api.tvmaze.com/search/shows?q=" + query)
+      let shows = await get("https://api.tvmaze.com/search/shows?q=" + query)
       shows = shows.map(({show}) => show)
       shows = shows.filter(({weight, status}) => weight > 0 && ["Running", "Ended", "To Be Determined"].includes(status))
       shows = shows.sort(({score: a}, {score: b}) => b - a)
-      shows = shows.map(({id}) => api.show(id))
-      return Promise.all(shows)
-   },
 
-   async get (url) {
-      let response = await fetch(url)
-      if (response.status === 429)
-         throw new ExpectedError("Too many requests, take it easy", {suspend: true})
-      if (!response.ok)
-         throw new Error("Request failed")
-      let json = await response.json()
-      return json
+      shows = shows.map(async ({id}) => {
+         try {
+            return await api.show(id)
+         }
+         catch (error) {
+            if (error instanceof TvMazeOverloadError)
+               throw error
+
+            if (!(error instanceof TvMazeError)) {
+               error.message = "Error parsing show " + id + ": " + error.message
+               logError(error)
+            }
+
+            return null
+         }
+      })
+      shows = await Promise.all(shows)
+      shows = shows.filter((show) => show !== null)
+
+      return Promise.all(shows)
    }
+
 }
+
+
+async function get (url) {
+   let response = await fetch(url)
+   if (response.status === 429)
+      throw new TvMazeOverloadError()
+   if (!response.ok)
+      throw new TvMazeFetchError()
+   let json = await response.json()
+   return json
+}
+
 
 export default api

@@ -27,6 +27,8 @@
 
 
 <script>
+import {handleError} from "../error"
+
 export default {
    props: {
       show: Object
@@ -45,19 +47,29 @@ export default {
          this.$store.dispatch("closeShow")
       },
 
-      toggleTracking (show) {
-         if (this.tracked)
-            this.$store.dispatch("untrackShow", {show})
-         else
-            this.$store.dispatch("trackShow", {show})
+      async toggleTracking (show) {
+         try {
+            if (this.tracked)
+               await this.$store.dispatch("untrackShow", {show})
+            else
+               await this.$store.dispatch("trackShow", {show})
+         }
+         catch (error) {
+            handleError(error)
+         }
       },
 
-      watchEpisode (show, season, episode) {
-         if (!this.tracked)
-            return
-         if (season === show.watched.season && episode === show.watched.episode)
-            return
-         this.$store.dispatch("watchEpisode", {show, season, episode})
+      async watchEpisode (show, season, episode) {
+         try {
+            if (!this.tracked)
+               return
+            if (season === show.watched.season && episode === show.watched.episode)
+               return
+            await this.$store.dispatch("watchEpisode", {show, season, episode})
+         }
+         catch (error) {
+            handleError(error)
+         }
       },
 
       isWatched (show, season, episode=null) {

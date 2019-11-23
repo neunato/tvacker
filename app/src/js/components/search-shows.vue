@@ -8,8 +8,10 @@
 
 <script>
 import api from "../api"
-import ExpectedError from "../error"
 import ShowList from "./show-list.vue"
+import {TvMazeOverloadError} from "../error"
+import {handleError} from "../error"
+
 
 export default {
    data: () => ({
@@ -40,14 +42,16 @@ export default {
          try {
             shows = await api.search(input)
          }
-         catch (e) {
+         catch (error) {
             store.dispatch("setSearchResults", {results: []})
 
-            if (!e.suspend)
-               throw e
+            if (!(error instanceof TvMazeOverloadError)) {
+               handleError(error)
+               return
+            }
 
             store.dispatch("suspendShowAPI")
-            store.dispatch("showMessage", {message:e.message, duration: Infinity})
+            store.dispatch("showMessage", {message: error.message, duration: Infinity})
 
             let retries = 3
             while (retries > 0) {
@@ -66,7 +70,8 @@ export default {
 
             if (!retries) {
                this.input = ""
-               throw new ExpectedError("Fetching data failed")
+               store.dispatch("showMessage", {message:"Fetching data failed"})
+               return
             }
          }
 
