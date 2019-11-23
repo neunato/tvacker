@@ -8,6 +8,7 @@
             <p class="years">{{show.data.years}}</p>
             <p class="genre">{{show.data.genre}}</p>
             <p class="label">{{show.data.label}}</p>
+            <p class="imdb"><a target="_blank" :href="'https://www.imdb.com/title/' + show.data.imdb">More info at IMDB</a></p>
          </div>
          <div class="show-episodes">
             <table>
