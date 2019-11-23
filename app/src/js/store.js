@@ -83,7 +83,7 @@ let store = new Vuex.Store({
          commit("set", {loading: false, shows})
       },
 
-      async watchEpisode ({commit}, {show, season, episode}) {
+      async watchEpisode ({commit, state}, {show, season, episode}) {
          commit("set", {loading: true})
          let data = {
             id: show.data.id,
@@ -95,7 +95,9 @@ let store = new Vuex.Store({
          }
          await db.push(data)
          show.watched = data.watched
-         commit("set", {loading: false})
+         show.timestamp = data.timestamp
+         let shows = [...state.shows]
+         commit("set", {loading: false, shows})
       },
 
       openShow ({commit}, {show}) {
