@@ -51,6 +51,12 @@ let store = new Vuex.Store({
          commit("set", {loading: false, user: email, shows})
       },
 
+      async register ({commit}, {email, password}) {
+         commit("set", {loading: true})
+         await db.register(email, password)
+         commit("set", {loading: false})
+      },
+
       async logout ({commit}) {
          commit("set", {loading: true})
          await db.logout()

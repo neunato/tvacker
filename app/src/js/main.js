@@ -13,7 +13,7 @@ Vue.config.errorHandler = (error) => {logError(error)}
    // HMM, SHOULD WE CATCH AND SILENT THIS ONE? PROBABLY YES
    let user = await db.init()
    if (user) {
-      let email = user
+      let email = user.email
       let local = true
       await store.dispatch("login", {email, local})
    }
