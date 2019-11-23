@@ -11,10 +11,12 @@
          </div>
          <div class="show-episodes">
             <table>
-               <tr v-for="{season, length} in show.data.seasons">
-                  <td class="season" :class="{watched: isWatched(show, season)}">{{season}}</td>
-                  <td v-for="_, i in length" class="episode" :class="{watched: isWatched(show, season, i+1)}" @click="watchEpisode(show, season, i+1)">{{i + 1}}</td>
-               </tr>
+               <template v-for="{season, length} in show.data.seasons">
+                  <tr v-for="row, i in rows(length)">
+                     <th v-if="i===0" class="season" :class="{watched: isWatched(show, season)}" :rowspan="rowCount(length)">{{season}}</th>
+                     <td v-for="episode in row" class="episode" :class="{watched: isWatched(show, season, episode)}" @click="watchEpisode(show, season, episode)">{{episode}}</td>
+                  </tr>
+               </template>
                <tr class="invisible"><td v-for="i in 11"></td></tr>
             </table>
          </div>
@@ -43,6 +45,28 @@ export default {
    },
 
    methods: {
+      rows (length) {
+         let result = []
+         let max = 25
+         let n = Math.ceil(length / max)
+         for (let i=0; i<n; i++) {
+            let episodes = []
+            let m
+            if (i + 1 < n || length % max === 0)
+               m = max
+            else
+               m = length % max
+            for (let j=1; j<=m; j++)
+               episodes.push(i*max + j)
+            result.push(episodes)
+         }
+         return result
+      },
+
+      rowCount (length) {
+         return Math.ceil(length / 25) 
+      },
+
       closeShow () {
          this.$store.dispatch("closeShow")
       },

@@ -245,7 +245,20 @@ header
             width: 100%
             table-layout: fixed
             border-collapse: collapse
+            position: relative
 
+            th
+               background-color: $colour-fafafa
+
+            th::before,
+            &::after
+               content: ""
+               position: absolute
+               left: 0
+               width: $main-width
+               border-bottom: 1px solid $colour-lightgray
+
+            th,
             td
                text-align: center
                line-height: 30px
@@ -253,8 +266,9 @@ header
                color: #ccc
                cursor: pointer
 
-               &:first-child
+               &.season
                   width: 54px
+                  vertical-align: top
                   cursor: default
 
                &.watched
