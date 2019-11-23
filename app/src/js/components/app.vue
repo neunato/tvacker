@@ -10,6 +10,7 @@
          <keep-alive>
             <component :is="tab.component"></component>
          </keep-alive>
+         <footer>Data by <a target="_blank" href="https://www.tvmaze.com/api">TV Maze</a></footer>
       </main>
       <show-preview v-if="show" :show="show"></show-preview>
       <message v-if="message" :message="message"></message>

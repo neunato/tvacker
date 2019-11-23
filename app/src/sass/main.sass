@@ -20,6 +20,13 @@ $padding-main: 10px
 ::after
    box-sizing: border-box
 
+a
+   text-decoration: none
+   border-bottom: 1px dotted
+
+   &:active
+      color: inherit
+
 li
    list-style-type: none
 
@@ -54,9 +61,6 @@ main,
    height: 100%
    overflow-y: auto
 
-main
-   padding-top: $nav-height
-
 #app.loading
    &::before
       content: ""
@@ -76,8 +80,6 @@ main
 
 /* HEADER */
 header
-   position: absolute
-   top: 0
    width: 100%
    height: $nav-height
    line-height: $nav-height
@@ -102,20 +104,24 @@ header
       cursor: pointer
 
 
+/* FOOTER */
+footer
+   height: $nav-height
+   line-height: $nav-height
+   text-align: center
+   border-top: 1px solid $colour-lightgray
+   font-size: 10px
+   color: #828282
+
+   a
+      color: #828282
+
 /* SHOW LIST */
 #tracked-shows,
 #search-shows
    position: relative
-   min-height: 100%
-   padding: $padding-main*2 $padding-main ($nav-height + $padding-main*2)
-
-   &::after
-      content: ""
-      width: 100%
-      position: absolute
-      left: 0
-      bottom: $nav-height
-      border-bottom: 1px solid $colour-lightgray
+   min-height: calc(100% - #{2 * $nav-height})
+   padding: $padding-main*2 $padding-main $padding-main*4
 
    input
       max-width: $main-width
@@ -200,15 +206,6 @@ header
    text-align: center
    background-color: white
    z-index: 1
-
-   &::after
-      content: ""
-      position: absolute
-      left: 0
-      display: block
-      width: 100%
-      height: $nav-height
-      border-top: 1px solid #eee
 
    .close-button
       position: sticky
@@ -320,6 +317,7 @@ header
    padding: 60px 20px 20px
    margin: 0 auto
    text-align: center
+   min-height: calc(100% - #{2 * $nav-height})
 
    input
       margin-bottom: 15px
