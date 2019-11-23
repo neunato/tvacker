@@ -1,6 +1,7 @@
 <template>
    <section id="tracked-shows">
       <show-list :shows="shows"></show-list>
+      <p v-if="!shows.length" class="note">Nothing tracked yet</p>
    </section>
 </template>
 

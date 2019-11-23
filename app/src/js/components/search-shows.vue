@@ -2,6 +2,7 @@
    <section id="search-shows">
       <input v-model="input" @input="search(input, 200)" @keydown.enter="search(input)" ref="el" placeholder="Search" :disabled="suspended">
       <show-list :shows="results"></show-list>
+      <p v-if="input.trim() && !searching && !results.length" class="note">No results</p>
    </section>
 </template>
 
@@ -16,7 +17,8 @@ import {handleError} from "../error"
 export default {
    data: () => ({
       input: "",
-      stamp: 0
+      stamp: 0,
+      searching: false
    }),
 
    computed: {
@@ -27,6 +29,7 @@ export default {
 
    methods: {
       async search (input, delay=0) {
+         this.searching = true
          let store = this.$store
 
          this.stamp++
@@ -70,10 +73,13 @@ export default {
 
             if (!retries) {
                this.input = ""
+               this.searching = false
                store.dispatch("showMessage", {message:"Fetching data failed"})
                return
             }
          }
+
+         this.searching = false
 
          shows = shows.map((data) => this.tracked.find((show) => data.id === show.data.id) || {
             timestamp: null,
@@ -83,7 +89,6 @@ export default {
             },
             data
          })
-
          store.dispatch("setSearchResults", {results: shows})
       }
    },
