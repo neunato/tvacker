@@ -4,6 +4,7 @@ import {TvMazeFetchError} from "./error"
 import {logError} from "./error"
 import db from "./db"
 
+let datetime = new Date()
 
 let api = {
 
@@ -11,6 +12,7 @@ let api = {
       let show = await get("https://api.tvmaze.com/shows/" + id + "?embed=episodes")
       let episodes = show._embedded.episodes
       let seasons = new Map()
+      episodes = episodes.filter(({airstamp}) => airstamp && new Date(airstamp) <= datetime)
       for (let {season, number} of episodes)
          seasons.set(season, number)
       seasons = [...seasons].map(([season, length]) => ({season, length}))
