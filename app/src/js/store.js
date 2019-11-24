@@ -68,9 +68,13 @@ let store = new Vuex.Store({
          let data = {
             id: show.data.id,
             timestamp: Date.now(),
-            watched: show.watched,
+            watched: {
+               season: null,
+               episode: null
+            }
          }
          await db.push(data)
+         show.watched = data.watched
          show.timestamp = data.timestamp
          let shows = [...state.shows, show]
          commit("set", {loading: false, shows})
