@@ -12,6 +12,7 @@ let store = new Vuex.Store({
       user: null,          // user email
       shows: [],           // tracked shows  - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
       results: [],         // searched shows - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
+      input: "",
       show: null,          // open show      -  {id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}
       loading: false,
       suspended: false,    // disables requests to tvmaze api
@@ -60,7 +61,7 @@ let store = new Vuex.Store({
       async logout ({commit}) {
          commit("set", {loading: true})
          await db.logout()
-         commit("set", {loading: false, user: null, shows: [], results: [], show: null, suspended: false, message: null})
+         commit("set", {loading: false, user: null, input: "", shows: [], results: [], show: null, suspended: false, message: null})
       },
 
       async trackShow ({commit, state}, {show}) {
@@ -114,6 +115,10 @@ let store = new Vuex.Store({
 
       setSearchResults ({commit}, {results}) {
          commit("set", {results})
+      },
+
+      setInput ({commit}, {input}) {
+         commit("set", {input})
       },
 
       suspendShowAPI ({commit}) {

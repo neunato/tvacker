@@ -1,0 +1,50 @@
+#app #overlay,
+#preloader
+   position: fixed
+   width: 100%
+   height: 100%
+   display: flex
+   justify-content: center
+   align-items: center
+   background-color: $overlay-bg-color
+   opacity: 0
+   z-index: -1
+   transition: opacity 100ms ease-in, z-index 100ms step-end
+
+#preloader
+   transition: opacity 400ms ease-in, z-index 400ms step-end
+
+#preloader::before
+   content: ""
+   position: absolute
+   left: 0
+   top: 0
+   width: 100%
+   height: 100%
+   background-color: $body-bg-color
+   z-index: -1
+
+#app.loading #overlay,
+#app.message #overlay,
+#app.loading + #preloader
+   opacity: 1
+   z-index: 11
+   transition: opacity 275ms ease, z-index 275ms step-start
+
+#overlay p
+   padding: 10px 15px
+   background-color: $overlay-p-bg-color
+   border: 1px solid $overlay-p-border-color
+   border-radius: 2px
+
+#app main
+   transition: filter 100ms ease
+
+#app.loading main,
+#app.message main
+   filter: blur(1.5px)
+   transition: filter 275ms ease
+
+#app.loading #overlay,
+#preloader
+   cursor: wait

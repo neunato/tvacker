@@ -1,0 +1,119 @@
+.show-preview
+   @include fullscreen-fixed
+   padding-top: $nav-height/2
+   padding-bottom: $nav-height/2
+   text-align: center
+   background-color: inherit
+   z-index: 1
+
+.show-preview .show
+   max-width: $main-width
+   margin: 0 auto
+   border: $container-border
+   border-radius: $container-border-radius
+   background-color: $container-bg
+
+
+.show-preview .show-details
+   .show-title
+      padding: 0 $wrap-padding-x
+      line-height: $nav-height
+      border-bottom: $container-border
+      font-size: $show-title-font-size
+      font-weight: 600
+      letter-spacing: 1px
+      text-transform: uppercase
+      text-shadow: 0px 2px 3px rgba(0,0,0,0.4), 0px 4px 13px rgba(0,0,0,0.1), 0px 9px 23px rgba(0,0,0,0.1)
+      color: $title-color
+
+   .show-image
+      display: block
+      height: $show-image-height
+      min-height: $show-image-height
+      max-height: $show-image-height
+      max-width: 100%
+      margin: $show-image-padding-y auto
+
+   .show-info
+      padding: 0 $wrap-padding-x
+      font-size: $show-details-font-size
+
+      span
+         display: inline-block
+         vertical-align: middle
+
+      span.separator
+         padding: 0 $show-details-separator-padding-x
+         font-size: $show-details-separator-font-size
+         opacity: 0.4
+
+   .imdb-link
+      margin: $show-image-padding-y 0
+      font-size: $link-font-size
+      letter-spacing: 0
+      color: $link-color
+
+
+.show-preview .show-episodes table
+   position: relative
+   width: 100%
+   table-layout: fixed
+   border-collapse: collapse
+   line-height: $show-table-line-height
+   font-size: $show-table-font-size
+   letter-spacing: 0
+   background-color: $body-bg-color
+   color: $show-table-fg-color
+
+   th.season
+      vertical-align: top
+      font-style: italic
+      font-weight: 600
+      border-right: $container-border
+      background-color: $show-table-season-bg-color
+
+   th.season.watched,
+   td.episode.watched
+      color: $show-table-watched-fg-color
+
+   td.episode
+      cursor: pointer
+
+   td.episode:hover
+      color: $show-table-hover-fg-color
+
+   th.label::before,
+   &::after
+      content: ""
+      position: absolute
+      left: 0
+      right: 0
+      border-top: $container-border
+
+
+.show-preview .show .track-button
+   display: flex
+   justify-content: center
+   align-items: center
+   height: $input-height
+
+   p
+      @include button
+      line-height: $button-height - 2px
+      margin-top: 1px
+      border: 1px solid $show-button-border-color
+
+
+.show-preview .show.tracked .track-button
+   p
+      background-color: inherit
+      color: $show-button-untrack-fg-color
+
+.show-preview .show .track-button
+   p
+      background-color: $show-button-bg-color
+      color: $body-fg-color
+
+   p:hover
+      background-color: $show-button-hover-bg-color
+      color: $body-fg-color

@@ -14,5 +14,13 @@
 </head>
 <body>
    <div id="app" class="loading"></div>
+   <div id="preloader">Loading...</div>
+   <script>
+      if (!Array.prototype.includes) {
+         var loader = document.querySelector("#preloader")
+         loader.innerHTML = "Sorry, browser not supported"
+         loader.style.cursor = "initial"
+      }
+   </script>
 </body>
 </html>

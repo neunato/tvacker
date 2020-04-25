@@ -1,6 +1,6 @@
 import api from "./api"
 import {FirebaseError} from "./error"
-import {logError} from "./error"
+
 
 let config = {
    apiKey: "AIzaSyAXFYQfaQPXY1M9-SD6Cfe2FS0hRTCgCN8",
@@ -17,7 +17,6 @@ firebase.analytics()
 
 let auth = firebase.auth()
 let firestore = firebase.firestore()
-
 
 let db = {
    async init () {
@@ -102,8 +101,10 @@ let db = {
          await firestore.collection("errors").add(error)
       }
       catch (e) {
-         firestore.collection("errors").add(error)  // Retry logging the error.
-         logError(e)                                // Log the error that occurred while logging the other error.
+         try {
+            await firestore.collection("errors").add(error)  // Retry logging the error.
+         }
+         catch (e) {}
       }
    }
 

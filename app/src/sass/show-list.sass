@@ -1,0 +1,59 @@
+#tracked-shows,
+#search-shows
+   min-height: $main-min-height
+
+#search-shows .input
+   max-width: $main-width
+   margin: 0 auto 25px
+
+.suspended #search-shows .input
+   cursor: not-allowed
+
+   input
+      color: $input-disabled-fg-color
+
+
+.show-list ul
+   max-width: $main-width
+   margin: 0 auto
+
+.show-list .show-thumbnail
+   box-sizing: content-box
+   position: relative
+   height: $thumb-height
+   margin-bottom: $thumb-margin-bottom
+   font-size: $thumb-font-size
+   background-color: $container-bg
+   border: 1px solid $body-bg-color
+   border-radius: $thumb-border-radius
+   overflow: hidden
+
+   &:hover
+      border: $container-border
+      opacity: 0.95
+
+   .title
+      text-transform: uppercase
+      font-weight: 600
+      color: $title-color
+
+   .show-image
+      position: absolute
+      max-height: $thumb-height
+      min-height: $thumb-height
+      z-index: 1
+
+   .show-details
+      height: 100%
+      margin-left: $thumb-image-width
+      margin-right: $ring-diameter + $thumb-padding-right
+      padding: $thumb-details-padding
+
+   .ring
+      position: absolute
+      top: ($thumb-height - $ring-diameter) / 2
+      right: $thumb-padding-right
+
+.show-list-note
+   text-align: center
+   font-size: $show-list-note-font-size

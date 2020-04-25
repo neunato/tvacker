@@ -1,0 +1,42 @@
+.input
+   position: relative
+   height: $input-height
+   padding: $input-padding-y 0
+   z-index: 1
+   cursor: text
+
+.input input
+   display: block
+   width: calc(100% - #{$input-padding-x * 2})
+   height: $input-height - $input-padding-y*2
+   margin-left: $input-padding-x
+   border: none
+   background-color: transparent
+   color: $input-fg-color
+   cursor: inherit
+
+   &:focus
+      outline: none
+
+   &:focus + .input-bg
+      border-color: $input-active-border-color !important
+
+   &:-webkit-autofill,
+   &:-webkit-autofill:hover,
+   &:-webkit-autofill:focus,
+   &:-webkit-autofill:active
+      -webkit-text-fill-color: $input-fg-color
+      -webkit-box-shadow: none !important
+      caret-color: $input-fg-color
+      box-shadow: 0 0 0 100px $input-bg-color inset !important
+
+.input .input-bg
+   position: absolute
+   top: 0
+   left: 0
+   right: 0
+   height: $input-height
+   border-radius: $input-height
+   border: 2px solid $input-bg-color !important
+   background-color: $input-bg-color
+   z-index: -1

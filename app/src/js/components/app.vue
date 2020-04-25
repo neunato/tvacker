@@ -1,19 +1,22 @@
 <template>
-   <div id="app" :class="{loading, suspended}">
+   <div id="app" :class="{loading, message, suspended}">
       <main>
          <header>
-            <div v-if="user" class="logout-button" @click="logout">log out</div>
             <nav>
-               <span v-for="t in tabs" @click="tab=t" :class="{selected: t===tab}">{{t.label}}</span>
+               <span v-for="t in tabs" class="tab" @click="tab=t" :class="{selected: t===tab}">{{t.label}}</span>
+               <span v-if="user" class="logout" @click="logout">log out</span>
             </nav>
          </header>
          <keep-alive>
-            <component :is="tab.component"></component>
+            <component :is="tab.component" :key="user + tab.component"></component>
          </keep-alive>
          <footer>Data by <a target="_blank" href="https://www.tvmaze.com/api">TV Maze</a></footer>
       </main>
-      <show-preview v-if="show" :show="show"></show-preview>
-      <message v-if="message" :message="message"></message>
+      <keep-alive><show-preview v-if="show" :show="show"></show-preview></keep-alive>
+
+      <!-- <keep-alive><section v-if="message" id="message"><p>{{message}}</p></section></keep-alive> -->
+      <!-- <keep-alive><section id="loader"></section></keep-alive> -->
+      <section id="overlay" @click="hideMessage"><p v-if="message">{{message}}</p></section>
    </div>
 </template>
 
@@ -24,7 +27,6 @@ import TrackedShows from "./tracked-shows.vue"
 import SearchShows from "./search-shows.vue"
 import Login from "./login.vue"
 import Register from "./register.vue"
-import Message from "./message.vue"
 import {handleError} from "../error"
 
 export default {
@@ -73,7 +75,20 @@ export default {
          catch (error) {
             handleError(error)
          }
+      },
+
+      hideMessage () {
+         if (this.message)
+            this.$store.dispatch("hideMessage")
       }
+   },
+
+   created () {
+      let loader = document.querySelector("#preloader")
+      loader.addEventListener("transitionend", (event) => {
+         if (event.propertyName === "opacity")
+            document.body.removeChild(loader)
+      })
    },
 
    components: {
@@ -81,8 +96,7 @@ export default {
       "tracked-shows": TrackedShows,
       "search-shows": SearchShows,
       "login": Login,
-      "register": Register,
-      "message": Message
+      "register": Register
    }
 }
 </script>

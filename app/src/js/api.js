@@ -17,7 +17,7 @@ let api = {
          seasons.set(season, number)
       seasons = [...seasons].map(([season, length]) => ({season, length}))
 
-      let {name, genres, premiered, type, status, image, externals} = show
+      let {name, genres, premiered, type, language, runtime, status, image, externals} = show
       let title = name
       if (type === "Animation")
          genres = [type, ...genres]
@@ -34,8 +34,10 @@ let api = {
       return {
          id,
          title,
-         genre,
          years,
+         genre,
+         language,
+         runtime,
          imdb,
          image,
          seasons

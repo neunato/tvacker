@@ -1,0 +1,40 @@
+*
+   margin: 0
+   padding: 0
+   box-sizing: border-box
+
+::before,
+::after
+   box-sizing: border-box
+
+a
+   text-decoration: none
+   border-bottom: 1px dotted
+   color: inherit
+
+   &:active
+      color: inherit
+
+li
+   list-style-type: none
+
+body
+   font-family: "Libre Franklin", "Helvetica Neue", helvetica, arial, sans-serif
+   line-height: 1.5
+   cursor: default
+   color: $body-fg-color
+   background-color: $body-bg-color
+   letter-spacing: 0.5px
+
+header,
+footer
+   letter-spacing: 0
+
+#app
+   background-color: inherit
+
+.invisible
+   visibility: hidden
+
+main
+   @include fullscreen-fixed

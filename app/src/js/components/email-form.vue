@@ -1,13 +1,16 @@
 <template>
    <section>
-      <input type="text" v-model="email" placeholder="Email" ref="email" @keydown.enter="onEnter" :autocomplete="autoComplete ? 'on' : 'new-password'">
-      <input type="password" v-model="password" placeholder="Password" ref="password" @keydown.enter="submit" :autocomplete="autoComplete ? 'on' : 'new-password'">
-      <div class="submit-button" @click="submit"><p>{{submitLabel}}</p></div>
+      <form>
+         <input-field v-model="email" placeholder="Email" @enter="onEnter" :autocomplete="autoComplete" ref="email"></input-field>
+         <input-field v-model="password" placeholder="Password" @enter="submit" :autocomplete="autoComplete" :hidden="true" ref="password"></input-field>
+         <div class="submit" @click="submit"><p class="button">{{submitLabel}}</p></div>
+      </form>
    </section>
 </template>
 
 
 <script>
+import InputField from "./input-field.vue"
 import {handleError} from "../error"
 
 export default {
@@ -20,6 +23,11 @@ export default {
       onSubmit: Function,
       submitLabel: String,
       autoComplete: Boolean
+   },
+
+   computed: {
+      emailEl () { return this.$refs.email.$refs.el },
+      passwordEl () { return this.$refs.password.$refs.el }
    },
 
    methods: {
@@ -36,7 +44,7 @@ export default {
 
       onEnter () {
          if (this.password.trim() === "")
-            this.$refs.password.focus()
+            this.passwordEl.focus()
          else
             this.submit()
       }
@@ -44,11 +52,15 @@ export default {
 
    activated () {
       if (this.email.trim() === "")
-         this.$refs.email.focus()
+         this.emailEl.focus()
       else if (this.password.trim() === "")
-         this.$refs.password.focus()
+         this.passwordEl.focus()
       else
-         this.$refs.email.focus()
+         this.emailEl.focus()
+   },
+
+   components: {
+      InputField
    }
 }
 </script>

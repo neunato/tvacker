@@ -1,8 +1,8 @@
 <template>
    <section id="search-shows">
-      <input v-model="input" @input="search(input, 200)" @keydown.enter="search(input)" ref="el" placeholder="Search" :disabled="suspended">
+      <input-field v-model="input" placeholder="Search" @input="search(input, 200)" @enter="search(input)" :disabled="suspended" ref="input"></input-field>
+      <p v-if="!searching && !results.length" class="show-list-note">{{input.trim() ? 'No results' : 'What are you watching?'}}</p>
       <show-list :shows="results"></show-list>
-      <p v-if="input.trim() && !searching && !results.length" class="note">No results</p>
    </section>
 </template>
 
@@ -10,13 +10,12 @@
 <script>
 import api from "../api"
 import ShowList from "./show-list.vue"
+import InputField from "./input-field.vue"
 import {TvMazeOverloadError} from "../error"
 import {handleError} from "../error"
 
-
 export default {
    data: () => ({
-      input: "",
       stamp: 0,
       searching: false
    }),
@@ -24,7 +23,11 @@ export default {
    computed: {
       results () { return this.$store.state.results },
       tracked () { return this.$store.state.shows },
-      suspended () { return this.$store.state.suspended }
+      suspended () { return this.$store.state.suspended },
+      input: {
+         get () { return this.$store.state.input },
+         set (input) { this.$store.dispatch("setInput", {input}) }
+      }
    },
 
    methods: {
@@ -94,11 +97,12 @@ export default {
    },
 
    activated () {
-      this.$refs.el.focus()
+      this.$refs.input.$refs.el.focus()
    },
 
    components: {
-      "show-list": ShowList
+      "show-list": ShowList,
+      "input-field": InputField,
    }
 }
 </script>
