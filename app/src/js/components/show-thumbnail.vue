@@ -31,17 +31,34 @@ export default {
 
       progress () {
          let show = this.show
-         let total = 0
-         let watched = 0
          let seasonAt = show.watched.season
          let episodeAt = show.watched.episode
+         let last_episode = show.data.last_episode
+
+         if (seasonAt === last_episode.season && episodeAt === last_episode.number)
+            return 100
+
+         let total = 0
+         let watched = 0
+         let now = new Date()
+         let episodes = show.data.episodes
          let seasons = show.data.seasons
-         for (let {season, length} of seasons) {
+         seasons = [...seasons].filter(([_, [{date}]]) => date && date < now)
+
+         for (let [season, {length}] of seasons) {
             total += length
             if (season < seasonAt)
                watched += length
             else if (season === seasonAt)
                watched += episodeAt
+         }
+
+         for (let i = episodes.length - 1; i >= 0; i--) {
+            let date = episodes[i].date
+            if (date > now)
+               total--
+            else
+               break
          }
          return watched / total * 100
       }

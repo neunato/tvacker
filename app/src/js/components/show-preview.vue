@@ -9,28 +9,30 @@
          </div>
          <div class="show-episodes">
             <table>
-               <template v-for="{season, length, rows, maxColumns} in seasons">
+               <template v-for="{season, rows, table_width} in seasons_table">
                   <tr v-for="row, i in rows">
-                     <th v-if="i===0" class="season label" :class="{watched: isWatched(show, season, 1)}">{{season}}</th>
-                     <th v-else class="season" :class="{watched: isWatched(show, season, i*maxColumns+1)}"></th>
-                     <td v-for="episode in row" class="episode" :class="{watched: isWatched(show, season, episode)}" @click="watchEpisode(show, season, episode)">{{episode}}</td>
+                     <th v-if="i===0" class="season label" :class="{watched: is_watched(show, season, 1), unreleased: !row[0].date || row[0].date > now}">{{season}}</th>
+                     <th v-else class="season"></th>
+                     <td v-for="{number, date} in row" class="episode" :class="{watched: is_watched(show, season, number), unreleased: !date || date > now}" @click="watch_episode(show, season, number, date)" :title="date ? date.toLocaleDateString('en-CA') : '???'"><span>{{number}}</span></td>
                   </tr>
                </template>
                <tr class="invisible"><td v-for="i in 11"></td></tr>
             </table>
          </div>
-         <div class="track-button"><p @click="trackShow(show)">{{tracked ? 'UN' : ''}}TRACK SHOW</p></div>
+         <div class="track-button"><p @click="track_show(show)">{{tracked ? 'UN' : ''}}TRACK SHOW</p></div>
       </div>
    </section>
 </template>
 
 
 <script>
-import ProgressRing from "./progress-ring.vue"
-import TextRing from "./text-ring.vue"
 import {handleError} from "../error"
 
 export default {
+   data: () => ({
+      now: new Date()
+   }),
+
    props: {
       show: Object
    },
@@ -41,56 +43,25 @@ export default {
          let tracked = this.$store.state.shows
          return tracked.some(({data}) => data.id === id)
       },
+      seasons_table () {
+         let seasons = [...this.show.data.seasons]
 
-      progress () {
-         let show = this.show
-         let total = 0
-         let watched = 0
-         let seasonAt = show.watched.season
-         let episodeAt = show.watched.episode
-         let seasons = show.data.seasons
-         for (let {season, length} of seasons) {
-            total += length
-            if (season < seasonAt)
-               watched += length
-            else if (season === seasonAt)
-               watched += episodeAt
-         }
-         return watched / total * 100
-      },
+         let table_width = Math.max(...seasons.map(([_, {length}]) => length))
+         table_width = Math.max(10, table_width)
+         table_width = Math.min(25, table_width)
 
-      seasons () {
-         let result = []
-         let maxColumns = 10
-         let max = 25
-         for (let {season, length} of this.show.data.seasons) {
+         seasons = seasons.map(([season, episodes]) => {
             let rows = []
-            let n = Math.ceil(length / max)
-            for (let i=0; i<n; i++) {
-               let episodes = []
-               let m
-               if (i + 1 < n || length % max === 0)
-                  m = max
-               else
-                  m = length % max
-               for (let j=1; j<=m; j++)
-                  episodes.push(i*max + j)
-
-               if (episodes.length > maxColumns)
-                  maxColumns = episodes.length
-               rows.push(episodes)
+            let i = 0
+            let n = episodes.length
+            while (i < n) {
+               rows.push(episodes.slice(i, i + table_width))
+               i += table_width
             }
-            result.push({
-               season,
-               length,
-               rows,
-            })
-         }
+            return {season, rows, table_width}
+         })
 
-         for (let data of result)
-            data.maxColumns = maxColumns
-
-         return result
+         return seasons
       }
    },
 
@@ -99,7 +70,7 @@ export default {
          this.$store.dispatch("closeShow")
       },
 
-      async trackShow (show) {
+      async track_show (show) {
          try {
             if (this.tracked)
                await this.$store.dispatch("untrackShow", {show})
@@ -111,9 +82,11 @@ export default {
          }
       },
 
-      async watchEpisode (show, season, episode) {
+      async watch_episode (show, season, episode, date) {
          try {
             if (!this.tracked)
+               return
+            if (!date || date > this.now)
                return
             if (season === show.watched.season && episode === show.watched.episode)
                return
@@ -124,7 +97,7 @@ export default {
          }
       },
 
-      isWatched (show, season, episode) {
+      is_watched (show, season, episode) {
          if (!this.tracked)
             return false
          let seasonAt = show.watched.season
@@ -174,11 +147,6 @@ export default {
 
          this.closeShow()
       })
-   },
-
-   components: {
-      "progress-ring": ProgressRing,
-      "text-ring": TextRing
    }
 }
 </script>

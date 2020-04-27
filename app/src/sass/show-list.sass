@@ -12,12 +12,44 @@
    input
       color: $input-disabled-fg-color
 
-
+.show-list h2,
 .show-list ul
    max-width: $main-width
    margin: 0 auto
 
-.show-list .show-thumbnail
+.show-list h2
+   position: relative
+   height: $show-list-heading-height
+   line-height: $show-list-heading-height
+   padding: 0 $show-list-heading-padding-x
+   margin-bottom: $thumb-margin-bottom - 1px
+   border: 1px solid $body-bg-color
+   font-size: $show-list-heading-font-size
+   font-weight: normal
+   font-style: italic
+   border-radius: $thumb-border-radius
+   background-color: $show-list-heading-bg-color
+   color: $show-list-heading-fg-color
+
+   &:first-letter
+      text-transform: uppercase
+
+   &::before
+      content: "▾"
+      position: absolute
+      right: $show-list-heading-padding-x - 3px
+      font-size: $show-list-heading-height - 5px
+      font-style: normal
+      font-family: "Courier New", Courier, monospace
+      color: $body-bg-color
+
+   &.collapsed::before
+      content: "◂"
+
+.show-list h2.collapsed + ul
+   display: none
+
+.show-list ul .show-thumbnail
    box-sizing: content-box
    position: relative
    height: $thumb-height

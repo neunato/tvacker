@@ -1,6 +1,6 @@
 <template>
    <section id="tracked-shows">
-      <show-list :shows="shows"></show-list>
+      <show-list :show_groups="show_groups"></show-list>
       <p v-if="!shows.length" class="show-list-note">Nothing tracked yet</p>
    </section>
 </template>
@@ -12,38 +12,46 @@ import ShowList from "./show-list.vue"
 export default {
    computed: {
       shows () {
-         let shows = [...this.$store.state.shows]
-         shows.sort((a, b) => {
-            let watched1 = this.completed(a)
-            let watched2 = this.completed(b)
-            if (watched1 !== watched2)     // One is entirely watched, and it goes last.
-               return watched1 || -1
-            let intact1 = this.intact(a)
-            let intact2 = this.intact(b)
-            if (intact1 !== intact2)       // One is not started, and it goes last.
-               return intact1 || -1
-            if (watched1 || intact1)       // Both are entirely watched or not started at all, sort by title.
-               return a.data.title.localeCompare(b.data.title)
-            else                           // Neither are entirely watched, sort by last edited.
-               return b.timestamp - a.timestamp
+         return this.$store.state.shows
+      },
+      show_groups () {
+         let shows = {
+            "new": [],
+            "coming soon": [],
+            "watching": [],
+            "not started": [],
+            "finished": []
+         }
 
-         })
+         for (let show of this.shows) {
+            let now = new Date()
+            let ms_in_month = 30 * 24 * 60 * 60 * 1000
+            let {last_episode, next_episode} = show.data
+            let ms_since_episode = now - last_episode.date
+            let ms_until_episode = next_episode ? next_episode.date - now : -1
+            let watched = show.watched
+            let group
+            if (ms_since_episode < ms_in_month)
+               group = "new"
+            else if (ms_until_episode > 0 && ms_until_episode < ms_in_month)
+               group = "coming soon"
+            else if (last_episode.season === watched.season && last_episode.number === watched.episode)
+               group = "finished"
+            else if (watched.season !== null)
+               group = "watching"
+            else
+               group = "not started"
+            shows[group].push(show)
+         }
+
+         shows["new"].sort((a, b) => b.data.last_episode.date - a.data.last_episode.date || a.data.title.localeCompare(b.data.title))
+         shows["coming soon"].sort((a, b) => (b.data.next_episode.date - now) - (a.data.next_episode.date - now) || a.data.title.localeCompare(b.data.title))
+         shows["watching"].sort((a, b) => b.timestamp - a.timestamp || a.data.title.localeCompare(b.data.title))
+         shows["finished"].sort((a, b) => a.data.title.localeCompare(b.data.title))
+         shows["not started"].sort((a, b) => a.data.title.localeCompare(b.data.title))
+
          return shows
       }
-   },
-
-   methods: {
-      completed (show) {
-         let seasonAt = show.watched.season
-         let episodeAt = show.watched.episode
-         let seasons = show.data.seasons
-         let {season, length} = seasons[seasons.length - 1]
-         return seasonAt === season && episodeAt === length
-      },
-      intact (show) {
-         return show.watched.season === null && show.watched.episode === null
-      },
-      
    },
 
    components: {

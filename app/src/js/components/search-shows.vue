@@ -2,10 +2,9 @@
    <section id="search-shows">
       <input-field v-model="input" placeholder="Search" @input="search(input, 200)" @enter="search(input)" :disabled="suspended" ref="input"></input-field>
       <p v-if="!searching && !results.length" class="show-list-note">{{input.trim() ? 'No results' : 'What are you watching?'}}</p>
-      <show-list :shows="results"></show-list>
+      <show-list :show_groups="{results}"></show-list>
    </section>
 </template>
-
 
 <script>
 import api from "../api"
