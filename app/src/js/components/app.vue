@@ -10,7 +10,7 @@
          <keep-alive>
             <component :is="tab.component" :key="user + tab.component"></component>
          </keep-alive>
-         <footer>Data by <a target="_blank" href="https://www.tvmaze.com/api">TV Maze</a></footer>
+         <footer>Data by <a target="_blank" href="https://www.tvmaze.com/api" rel="noopener">TV Maze</a></footer>
       </main>
       <keep-alive><show-preview v-if="show" :show="show"></show-preview></keep-alive>
 

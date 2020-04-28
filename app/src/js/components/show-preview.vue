@@ -5,7 +5,7 @@
             <h1 class="show-title">{{show.data.title}}</h1>
             <img class="show-image" v-if="show.data.image.large" :src="show.data.image.large">
             <p class="show-info"><span class="show-years">{{show.data.years}}</span><span class="separator">●</span><span class="show-language">{{show.data.language}}</span><span class="separator">●</span><span class="show-genre">{{show.data.genre}}</span><span class="separator">●</span><span class="show-runtime">{{show.data.runtime}} min</span></p>
-            <p class="imdb-link"><a target="_blank" :href="'https://www.imdb.com/title/' + show.data.imdb">More info at IMDB</a></p>
+            <p class="imdb-link"><a target="_blank" :href="'https://www.imdb.com/title/' + show.data.imdb" rel="noopener">More info at IMDB</a></p>
          </div>
          <div class="show-episodes">
             <table>

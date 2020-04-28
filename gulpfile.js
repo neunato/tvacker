@@ -10,7 +10,7 @@ let sass      = require("node-sass")
 let t = {
    async rollup (contents, file) {
       let bundle = await rollup.rollup({ input: file.path, plugins: [
-         replace({"process.env.NODE_ENV": "'develop'"}),
+         replace({"process.env.NODE_ENV": "'production'"}),
          vue(),
          resolve(),
          commonjs()
@@ -28,6 +28,7 @@ let t = {
       let result = sass.renderSync({
          data: contents.toString(),
          indentedSyntax: true,
+         outputStyle: "compressed",
          includePaths: ["app/src/sass/"]
       })
       return result.css
@@ -40,7 +41,7 @@ let tasks = {
       watch: "app/src/js/",
       src: "app/src/js/main.js",
       dest: "app/dist/",
-      transforms: [t.rollup]//, t.minify]
+      transforms: [t.rollup, t.minify]
    },
 
    "build:css": {

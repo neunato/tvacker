@@ -1,16 +1,18 @@
 <template>
    <div class="input">
-      <input
-         :type="hidden ? 'password' : 'text'"
-         :value="value"
-         :placeholder="placeholder"
-         :disabled="disabled"
-         :autocomplete="autocomplete ? 'on' : 'new-password'"
-         @input="$emit('input', $event.target.value)"
-         @keydown.escape="$emit('input', '')"
-         @keydown.enter="$emit('enter', value)"
-         spellcheck="false"
-         ref="el">
+      <label><span>{{placeholder}}</span>
+         <input
+            :type="hidden ? 'password' : 'text'"
+            :value="value"
+            :placeholder="placeholder"
+            :disabled="disabled"
+            :autocomplete="autocomplete ? 'on' : 'new-password'"
+            @input="$emit('input', $event.target.value)"
+            @keydown.escape="$emit('input', '')"
+            @keydown.enter="$emit('enter', value)"
+            spellcheck="false"
+            ref="el">
+      </label>
       <span class="input-bg" @mousedown.prevent="$refs.el.focus()"></span>
    </div>
 </template>
