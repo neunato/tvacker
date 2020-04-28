@@ -24,14 +24,14 @@ TvMazeOverloadError.prototype.name = "TvMazeOverloadError"
 TvMazeFetchError.prototype.name = "TvMazeFetchError"
 
 
-function handleError (error) {
+function handle_error (error) {
    if (error instanceof FirebaseError || error instanceof TvMazeError)
       store.dispatch("show_message", {message: error.message})
    else
-      logError(error)
+      log_error(error)
 }
 
-function logError (error) {
+function log_error (error) {
    let user = store.state.user || null
    let payload = {
       uid: user && user.uid,
@@ -48,6 +48,6 @@ export {
    TvMazeError,
    TvMazeOverloadError,
    TvMazeFetchError,
-   handleError,
-   logError
+   handle_error,
+   log_error
 }

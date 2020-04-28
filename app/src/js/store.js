@@ -126,7 +126,7 @@ let store = new Vuex.Store({
          commit("set", {suspended: false})
       },
 
-      async show_message ({commit}, {message, duration=3000}) {
+      async show_message ({commit}, {message, duration=2000}) {
          stamp++
          let id = stamp
          commit("set", {message, loading: false})

@@ -1,12 +1,12 @@
 <template>
-   <div class="show-thumbnail" @click="open_show(show)">
+   <div class="show-thumbnail" @click="open_show">
       <img class="show-image" :src="show.data.image.small">
       <div class="show-details">
          <p class="title">{{show.data.title}}</p>
          <p class="years">{{show.data.years}}</p>
          <p class="genre">{{show.data.genre}}</p>
          <progress-ring v-if="tracked" :radius="32" :progress="progress" :stroke="4"></progress-ring>
-         <text-ring v-else :radius="32" :stroke="4" text="track" @click="() => track_show(show)"></text-ring>
+         <text-ring v-else :radius="32" :stroke="4" text="track" @click="track_show"></text-ring>
       </div>
    </div>
 </template>
@@ -15,7 +15,7 @@
 <script>
 import ProgressRing from "./progress-ring.vue"
 import TextRing from "./text-ring.vue"
-import {handleError} from "../error"
+import {handle_error} from "../error"
 
 export default {
    props: {
@@ -65,19 +65,17 @@ export default {
    },
 
    methods: {
-      open_show (show) {
-         this.$store.dispatch("open_show", {show})
+      open_show () {
+         let store = this.$store
+         let show = this.show
+         store.dispatch("open_show", {show})
       },
 
-      async track_show (show) {
-         try {
-            await this.$store.dispatch("track_show", {show})
-         }
-         catch (error) {
-            handleError(error)
-         }
+      track_show () {
+         let store = this.$store
+         let show = this.show
+         store.dispatch("track_show", {show})
       }
-
    },
 
    components: {

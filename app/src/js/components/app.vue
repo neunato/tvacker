@@ -14,8 +14,6 @@
       </main>
       <keep-alive><show-preview v-if="show" :show="show"></show-preview></keep-alive>
 
-      <!-- <keep-alive><section v-if="message" id="message"><p>{{message}}</p></section></keep-alive> -->
-      <!-- <keep-alive><section id="loader"></section></keep-alive> -->
       <section id="overlay" @click="hide_message"><p v-if="message">{{message}}</p></section>
    </div>
 </template>
@@ -27,7 +25,7 @@ import TrackedShows from "./tracked-shows.vue"
 import SearchShows from "./search-shows.vue"
 import Login from "./login.vue"
 import Register from "./register.vue"
-import {handleError} from "../error"
+import {handle_error} from "../error"
 
 export default {
    data: () => ({
@@ -67,14 +65,8 @@ export default {
    },
 
    methods: {
-      async logout () {
-         try {
-            let store = this.$store
-            await store.dispatch("logout")
-         }
-         catch (error) {
-            handleError(error)
-         }
+      logout () {
+         this.$store.dispatch("logout")
       },
 
       hide_message () {

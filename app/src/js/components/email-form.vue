@@ -1,9 +1,9 @@
 <template>
    <section>
       <form>
-         <input-field v-model="email" placeholder="Email" @enter="onEnter" :autocomplete="autoComplete" ref="email"></input-field>
-         <input-field v-model="password" placeholder="Password" @enter="submit" :autocomplete="autoComplete" :hidden="true" ref="password"></input-field>
-         <div class="submit" @click="submit"><p class="button">{{submitLabel}}</p></div>
+         <input-field v-model="email" placeholder="Email" @enter="on_enter" :autocomplete="autocomplete" ref="email"></input-field>
+         <input-field v-model="password" placeholder="Password" @enter="submit" :autocomplete="autocomplete" :hidden="true" ref="password"></input-field>
+         <div class="submit" @click="submit"><p class="button">{{submit_label}}</p></div>
       </form>
    </section>
 </template>
@@ -11,7 +11,6 @@
 
 <script>
 import InputField from "./input-field.vue"
-import {handleError} from "../error"
 
 export default {
    data: () => ({
@@ -20,31 +19,35 @@ export default {
    }),
 
    props: {
-      onSubmit: Function,
-      submitLabel: String,
-      autoComplete: Boolean
+      submit_label: String,
+      autocomplete: Boolean
    },
 
    computed: {
-      emailEl () { return this.$refs.email.$refs.el },
-      passwordEl () { return this.$refs.password.$refs.el }
+      email_el () { return this.$refs.email.$refs.el },
+      password_el () { return this.$refs.password.$refs.el }
    },
 
    methods: {
-      async submit () {
-         try {
-            await this.onSubmit(this.email, this.password)
-            this.email = ""
-            this.password = ""
-         }
-         catch (error) {
-            handleError(error)
-         }
+      reset ({email, password}) {
+         if (typeof email === "string")
+            this.email = email
+         if (typeof password === "string")
+            this.password = password
       },
 
-      onEnter () {
+      submit () {
+         let user = {
+            email: this.email,
+            password: this.password,
+            reset: this.reset
+         }
+         this.$emit("submit", user)
+      },
+
+      on_enter () {
          if (this.password.trim() === "")
-            this.passwordEl.focus()
+            this.password_el.focus()
          else
             this.submit()
       }
@@ -52,11 +55,11 @@ export default {
 
    activated () {
       if (this.email.trim() === "")
-         this.emailEl.focus()
+         this.email_el.focus()
       else if (this.password.trim() === "")
-         this.passwordEl.focus()
+         this.password_el.focus()
       else
-         this.emailEl.focus()
+         this.email_el.focus()
    },
 
    components: {

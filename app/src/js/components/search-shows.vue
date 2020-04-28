@@ -10,8 +10,8 @@
 import api from "../api"
 import ShowList from "./show-list.vue"
 import InputField from "./input-field.vue"
-import {TvMazeError, TvMazeFetchError, TvMazeOverloadError} from "../error"
-import {handleError} from "../error"
+import {TvMazeError, TvMazeOverloadError} from "../error"
+import {handle_error} from "../error"
 
 export default {
    data: () => ({
@@ -67,7 +67,7 @@ export default {
             this.error = "Network error"
 
             if (!(error instanceof TvMazeError)) {
-               handleError(error)
+               handle_error(error)
                this.searching = false
                return
             }

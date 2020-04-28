@@ -26,7 +26,7 @@
 
 
 <script>
-import {handleError} from "../error"
+import {handle_error} from "../error"
 
 export default {
    data: () => ({

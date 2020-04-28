@@ -1,7 +1,7 @@
 import {TvMazeError} from "./error"
 import {TvMazeOverloadError} from "./error"
 import {TvMazeFetchError} from "./error"
-import {logError} from "./error"
+import {log_error} from "./error"
 import db from "./db"
 
 
@@ -79,7 +79,7 @@ let api = {
 
             if (!(error instanceof TvMazeError)) {
                error.message = "Error parsing show " + id + ": " + error.message
-               logError(error)
+               log_error(error)
             }
 
             return null

@@ -4,10 +4,10 @@ import App from "./components/app.vue"
 import api from "./api"
 import store from "./store"
 import db from "./db"
-import {logError} from "./error"
+import {log_error} from "./error"
 
 // A ridiculous behaviour disallows .errorHandler = f or even .errorHandler = (e) => f(e) without curly braces.
-Vue.config.errorHandler = (error) => {logError(error)}
+Vue.config.errorHandler = (error) => {log_error(error)}
 
 (async () => {
    try {
@@ -31,6 +31,6 @@ Vue.config.errorHandler = (error) => {logError(error)}
       let loader = document.querySelector("#preloader")
       loader.innerHTML = "Shit broke"
       loader.style.cursor = "initial"
-      logError(error)
+      log_error(error)
    }
 })()
