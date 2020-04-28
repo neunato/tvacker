@@ -1,10 +1,10 @@
+import "./globals"
 import Vue from "vue"
 import App from "./components/app.vue"
 import api from "./api"
 import store from "./store"
 import db from "./db"
 import {logError} from "./error"
-import "./globals"
 
 // A ridiculous behaviour disallows .errorHandler = f or even .errorHandler = (e) => f(e) without curly braces.
 Vue.config.errorHandler = (error) => {logError(error)}

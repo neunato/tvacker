@@ -40,7 +40,7 @@ let tasks = {
       watch: "app/src/js/",
       src: "app/src/js/main.js",
       dest: "app/dist/",
-      transforms: [t.rollup, t.minify]
+      transforms: [t.rollup]//, t.minify]
    },
 
    "build:css": {

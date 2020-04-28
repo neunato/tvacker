@@ -1,5 +1,5 @@
 <template>
-   <section class="show-preview" @click="closeShow">
+   <section class="show-preview" @click="close_show">
       <div class="show" :class="{tracked}" @click.stop>
          <div class="show-details">
             <h1 class="show-title">{{show.data.title}}</h1>
@@ -66,35 +66,25 @@ export default {
    },
 
    methods: {
-      closeShow () {
-         this.$store.dispatch("closeShow")
+      close_show () {
+         this.$store.dispatch("close_show")
       },
 
-      async track_show (show) {
-         try {
-            if (this.tracked)
-               await this.$store.dispatch("untrackShow", {show})
-            else
-               await this.$store.dispatch("trackShow", {show})
-         }
-         catch (error) {
-            handleError(error)
-         }
+      track_show (show) {
+         if (this.tracked)
+            this.$store.dispatch("untrack_show", {show})
+         else
+            this.$store.dispatch("track_show", {show})
       },
 
-      async watch_episode (show, season, episode, date) {
-         try {
-            if (!this.tracked)
-               return
-            if (!date || date > this.now)
-               return
-            if (season === show.watched.season && episode === show.watched.episode)
-               return
-            await this.$store.dispatch("watchEpisode", {show, season, episode})
-         }
-         catch (error) {
-            handleError(error)
-         }
+      watch_episode (show, season, episode, date) {
+         if (!this.tracked)
+            return
+         if (!date || date > this.now)
+            return
+         if (season === show.watched.season && episode === show.watched.episode)
+            return
+         this.$store.dispatch("watch_episode", {show, season, episode})
       },
 
       is_watched (show, season, episode) {
@@ -109,7 +99,7 @@ export default {
    mounted () {
       document.addEventListener("keydown", (e) => {
          if (e.key === "Escape" && this.show)
-            this.closeShow()
+            this.close_show()
       })
 
       let min = 40
@@ -145,7 +135,7 @@ export default {
          if (x === 0)
             return
 
-         this.closeShow()
+         this.close_show()
       })
    }
 }

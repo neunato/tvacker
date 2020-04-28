@@ -1,12 +1,12 @@
 <template>
-   <div class="show-thumbnail" @click="openShow(show)">
+   <div class="show-thumbnail" @click="open_show(show)">
       <img class="show-image" :src="show.data.image.small">
       <div class="show-details">
          <p class="title">{{show.data.title}}</p>
          <p class="years">{{show.data.years}}</p>
          <p class="genre">{{show.data.genre}}</p>
          <progress-ring v-if="tracked" :radius="32" :progress="progress" :stroke="4"></progress-ring>
-         <text-ring v-else :radius="32" text="track" :clickHandler="() => trackShow(show)"></text-ring>
+         <text-ring v-else :radius="32" :stroke="4" text="track" @click="() => track_show(show)"></text-ring>
       </div>
    </div>
 </template>
@@ -65,13 +65,13 @@ export default {
    },
 
    methods: {
-      openShow (show) {
-         this.$store.dispatch("openShow", {show})
+      open_show (show) {
+         this.$store.dispatch("open_show", {show})
       },
 
-      async trackShow (show) {
+      async track_show (show) {
          try {
-            await this.$store.dispatch("trackShow", {show})
+            await this.$store.dispatch("track_show", {show})
          }
          catch (error) {
             handleError(error)

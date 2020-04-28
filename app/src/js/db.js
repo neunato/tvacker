@@ -17,6 +17,7 @@ firebase.analytics()
 
 let auth = firebase.auth()
 let firestore = firebase.firestore()
+firestore.enablePersistence({synchronizeTabs: true})
 
 let db = {
    async init () {
@@ -29,13 +30,15 @@ let db = {
       }
       catch (e) {
          let code = e.code
+         if (code === "auth/network-request-failed")
+            throw new FirebaseError("Network error")
          if (code === "auth/email-already-in-use")
             throw new FirebaseError("Email already in use")
          if (code === "auth/invalid-email")
             throw new FirebaseError("Email not valid")
          if (code === "auth/weak-password")
             throw new FirebaseError("Password too weak")
-         throw e
+         throw new FirebaseError("Unexpected error")
       }
 
       try {
@@ -53,7 +56,10 @@ let db = {
          await auth.signInWithEmailAndPassword(email, password)
       }
       catch (e) {
-         throw new FirebaseError("Invalid email or password")
+         if (e.code === "auth/network-request-failed")
+            throw new FirebaseError("Network error")
+         else
+            throw new FirebaseError("Invalid email or password")
       }
    },
 

@@ -95,7 +95,13 @@ let api = {
 
 
 async function get (url) {
-   let response = await fetch(url)
+   let response
+   try {
+      response = await fetch(url)
+   }
+   catch (e) {
+      throw new TvMazeFetchError()
+   }
    if (response.status === 429)
       throw new TvMazeOverloadError()
    if (!response.ok)

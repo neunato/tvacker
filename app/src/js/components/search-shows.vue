@@ -1,7 +1,7 @@
 <template>
    <section id="search-shows">
       <input-field v-model="input" placeholder="Search" @input="search(input, 200)" @enter="search(input)" :disabled="suspended" ref="input"></input-field>
-      <p v-if="!searching && !results.length" class="show-list-note">{{input.trim() ? 'No results' : 'What are you watching?'}}</p>
+      <p v-if="note" class="show-list-note">{{note}}</p>
       <show-list :show_groups="{results}"></show-list>
    </section>
 </template>
@@ -10,13 +10,14 @@
 import api from "../api"
 import ShowList from "./show-list.vue"
 import InputField from "./input-field.vue"
-import {TvMazeOverloadError} from "../error"
+import {TvMazeError, TvMazeFetchError, TvMazeOverloadError} from "../error"
 import {handleError} from "../error"
 
 export default {
    data: () => ({
       stamp: 0,
-      searching: false
+      searching: false,
+      error: null
    }),
 
    computed: {
@@ -25,13 +26,27 @@ export default {
       suspended () { return this.$store.state.suspended },
       input: {
          get () { return this.$store.state.input },
-         set (input) { this.$store.dispatch("setInput", {input}) }
+         set (input) { this.$store.dispatch("set_input", {input}) }
+      },
+      note () {
+         if (this.searching)
+            return null
+         if (this.error)
+            return this.error
+         if (this.input.trim() === "")
+            return "What are you watching?"
+         if (this.results.length)
+            return null
+         else
+            return "No results"
       }
    },
 
    methods: {
       async search (input, delay=0) {
          this.searching = true
+         this.error = null
+
          let store = this.$store
 
          this.stamp++
@@ -43,45 +58,43 @@ export default {
          if (stamp !== this.stamp)
             return
 
-         let shows
+         let shows = []
          try {
             shows = await api.search(input)
          }
          catch (error) {
-            store.dispatch("setSearchResults", {results: []})
+            store.dispatch("set_search_results", {results: []})
+            this.error = "Network error"
 
-            if (!(error instanceof TvMazeOverloadError)) {
+            if (!(error instanceof TvMazeError)) {
                handleError(error)
-               return
-            }
-
-            store.dispatch("suspendShowAPI")
-            store.dispatch("showMessage", {message: error.message, duration: Infinity})
-
-            let retries = 3
-            while (retries > 0) {
-               try {
-                  await sleep(5000)
-                  shows = await api.search(input)
-                  break
-               }
-               catch (e) {
-                  retries--
-               }
-            }
-
-            store.dispatch("unsuspendShowAPI")
-            store.dispatch("hideMessage")
-
-            if (!retries) {
-               this.input = ""
                this.searching = false
-               store.dispatch("showMessage", {message:"Fetching data failed"})
                return
+            }
+
+            if (error instanceof TvMazeOverloadError) {
+               store.dispatch("suspend_show_api")
+               store.dispatch("show_message", {message: error.message, duration: Infinity})
+
+               let retries = 3
+               while (retries > 0) {
+                  try {
+                     await sleep(5000)
+                     shows = await api.search(input)
+                     break
+                  }
+                  catch (e) {
+                     retries--
+                  }
+               }
+
+               store.dispatch("unsuspend_show_api")
+               store.dispatch("hide_message")
+
+               if (!retries)
+                  store.dispatch("show_message", {message: "Fetching data failed"})
             }
          }
-
-         this.searching = false
 
          shows = shows.map((data) => this.tracked.find((show) => data.id === show.data.id) || {
             timestamp: null,
@@ -91,7 +104,9 @@ export default {
             },
             data
          })
-         store.dispatch("setSearchResults", {results: shows})
+
+         store.dispatch("set_search_results", {results: shows})
+         this.searching = false
       }
    },
 

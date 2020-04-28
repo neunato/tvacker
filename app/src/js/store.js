@@ -64,8 +64,7 @@ let store = new Vuex.Store({
          commit("set", {loading: false, user: null, input: "", shows: [], results: [], show: null, suspended: false, message: null})
       },
 
-      async trackShow ({commit, state}, {show}) {
-         commit("set", {loading: true})
+      async track_show ({commit, state}, {show}) {
          let data = {
             id: show.data.id,
             timestamp: Date.now(),
@@ -74,22 +73,20 @@ let store = new Vuex.Store({
                episode: null
             }
          }
-         await db.push(data)
          show.watched = data.watched
          show.timestamp = data.timestamp
          let shows = [...state.shows, show]
-         commit("set", {loading: false, shows})
+         commit("set", {shows})
+         return db.push(data)
       },
 
-      async untrackShow ({commit, state}, {show}) {
-         commit("set", {loading: true})
-         await db.delete(show.data.id)
+      async untrack_show ({commit, state}, {show}) {
          let shows = state.shows.filter((s) => s !== show)
-         commit("set", {loading: false, shows})
+         commit("set", {shows})
+         return db.delete(show.data.id)
       },
 
-      async watchEpisode ({commit, state}, {show, season, episode}) {
-         commit("set", {loading: true})
+      async watch_episode ({commit, state}, {show, season, episode}) {
          let data = {
             id: show.data.id,
             timestamp: Date.now(),
@@ -98,38 +95,38 @@ let store = new Vuex.Store({
                episode
             }
          }
-         await db.push(data)
          show.watched = data.watched
          show.timestamp = data.timestamp
          let shows = [...state.shows]
-         commit("set", {loading: false, shows})
+         commit("set", {shows})
+         return db.push(data)
       },
 
-      openShow ({commit}, {show}) {
+      open_show ({commit}, {show}) {
          commit("set", {show})
       },
 
-      closeShow ({commit}) {
+      close_show ({commit}) {
          commit("set", {show: null})
       },
 
-      setSearchResults ({commit}, {results}) {
+      set_search_results ({commit}, {results}) {
          commit("set", {results})
       },
 
-      setInput ({commit}, {input}) {
+      set_input ({commit}, {input}) {
          commit("set", {input})
       },
 
-      suspendShowAPI ({commit}) {
+      suspend_show_api ({commit}) {
          commit("set", {suspended: true})
       },
 
-      unsuspendShowAPI ({commit}) {
+      unsuspend_show_api ({commit}) {
          commit("set", {suspended: false})
       },
 
-      async showMessage ({commit}, {message, duration=3000}) {
+      async show_message ({commit}, {message, duration=3000}) {
          stamp++
          let id = stamp
          commit("set", {message, loading: false})
@@ -140,7 +137,7 @@ let store = new Vuex.Store({
             commit("set", {message: null})
       },
 
-      hideMessage ({commit}) {
+      hide_message ({commit}) {
          commit("set", {message: null})
       }
    }

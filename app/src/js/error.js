@@ -6,13 +6,13 @@ class FirebaseError extends Error {}
 
 class TvMazeError extends Error {}
 
-class TvMazeOverloadError extends Error {
+class TvMazeOverloadError extends TvMazeError {
    constructor () {
       super("Too many requests, take it easy")
    }
 }
 
-class TvMazeFetchError extends Error {
+class TvMazeFetchError extends TvMazeError {
    constructor () {
       super("Fetching data failed")
    }
@@ -26,7 +26,7 @@ TvMazeFetchError.prototype.name = "TvMazeFetchError"
 
 function handleError (error) {
    if (error instanceof FirebaseError || error instanceof TvMazeError)
-      store.dispatch("showMessage", {message: error.message})
+      store.dispatch("show_message", {message: error.message})
    else
       logError(error)
 }

@@ -8,10 +8,10 @@
          />
          <circle
             :stroke-dasharray="circumference + ' ' + circumference"
-            :stroke-dashoffset="strokeOffset"
+            :stroke-dashoffset="stroke_offset"
             :stroke-width="stroke"
-            :stroke="getColor(progress)"
-            :r="normalisedRadius"
+            :stroke="get_color(progress)"
+            :r="normalised_radius"
             :cx="radius"
             :cy="radius"
          />
@@ -30,21 +30,18 @@ export default {
       stroke: Number
    },
    computed: {
-      shortProgress () {
-         return Math.floor(this.progress * 100) / 100
-      },
-      normalisedRadius () {
+      normalised_radius () {
          return this.radius - this.stroke / 2
       },
       circumference () {
-         return this.normalisedRadius * 2 * Math.PI
+         return this.normalised_radius * 2 * Math.PI
       },
-      strokeOffset () {
+      stroke_offset () {
          return this.circumference - this.progress / 100 * this.circumference
       }
    },
    methods: {
-      getColor (percent) {
+      get_color (percent) {
          return `hsl(${(percent/100) * 120},30%,50%)`
       }
    }

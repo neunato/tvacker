@@ -16,7 +16,7 @@
 
       <!-- <keep-alive><section v-if="message" id="message"><p>{{message}}</p></section></keep-alive> -->
       <!-- <keep-alive><section id="loader"></section></keep-alive> -->
-      <section id="overlay" @click="hideMessage"><p v-if="message">{{message}}</p></section>
+      <section id="overlay" @click="hide_message"><p v-if="message">{{message}}</p></section>
    </div>
 </template>
 
@@ -77,9 +77,9 @@ export default {
          }
       },
 
-      hideMessage () {
+      hide_message () {
          if (this.message)
-            this.$store.dispatch("hideMessage")
+            this.$store.dispatch("hide_message")
       }
    },
 

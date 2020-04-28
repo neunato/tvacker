@@ -11,7 +11,7 @@ export default {
       async register (email, password) {
          let store = this.$store
          await store.dispatch("register", {email, password})
-         store.dispatch("showMessage", {message:`Email sent to ${email}`})
+         store.dispatch("show_message", {message:`Email sent to ${email}`})
       }
    },
 
