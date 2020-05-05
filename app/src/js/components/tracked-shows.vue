@@ -23,15 +23,15 @@ export default {
             "finished": []
          }
 
+         let now = new Date()
          for (let show of this.shows) {
-            let now = new Date()
             let ms_in_month = 30 * 24 * 60 * 60 * 1000
             let {last_episode, next_episode} = show.data
             let ms_since_episode = now - last_episode.date
             let ms_until_episode = next_episode ? next_episode.date - now : -1
             let watched = show.watched
             let group
-            if (ms_since_episode < ms_in_month)
+            if (ms_since_episode < ms_in_month && !(last_episode.season === watched.season && last_episode.number === watched.episode))
                group = "new"
             else if (ms_until_episode > 0 && ms_until_episode < ms_in_month)
                group = "coming soon"
