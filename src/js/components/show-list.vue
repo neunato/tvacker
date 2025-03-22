@@ -1,12 +1,14 @@
 <template>
    <section class="show-list">
-      <template v-for="shows, group in show_groups" v-if="shows.length">
-         <h2 v-if="groups_count>1" :class="{collapsed: hidden[group]}" @click="hidden[group] = !hidden[group]">{{group}}</h2>
-         <ul>
-            <li v-for="show in shows" :key="show.data.id">
-               <show-thumbnail :show="show"></show-thumbnail>
-            </li>
-         </ul>
+      <template v-for="shows, group in show_groups">
+         <template v-if="shows.length">
+            <h2 v-if="groups_count>1" :class="{collapsed: hidden[group]}" @click="hidden[group] = !hidden[group]">{{group}}</h2>
+            <ul>
+               <li v-for="show in shows" :key="show.data.id">
+                  <show-thumbnail :show="show"></show-thumbnail>
+               </li>
+            </ul>
+         </template>
       </template>
    </section>
 </template>

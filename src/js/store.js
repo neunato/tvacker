@@ -1,13 +1,10 @@
-import Vue from "vue"
-import Vuex from "vuex"
+import { createStore } from "vuex"
 import db from "./db"
 import api from "./api"
 
-Vue.use(Vuex)
-
 let stamp = 0
 
-let store = new Vuex.Store({
+let store = createStore({
    state: {
       user: null,          // user email
       shows: [],           // tracked shows  - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]

@@ -3,13 +3,13 @@
       <label><span>{{placeholder}}</span>
          <input
             :type="hidden ? 'password' : 'text'"
-            :value="value"
+            :value="modelValue"
             :placeholder="placeholder"
             :disabled="disabled"
             :autocomplete="autocomplete ? 'on' : 'new-password'"
-            @input="$emit('input', $event.target.value)"
+            @input="$emit('update:modelValue', $event.target.value)"
             @keydown.escape="$emit('input', '')"
-            @keydown.enter="$emit('enter', value)"
+            @keydown.enter="$emit('enter', modelValue)"
             spellcheck="false"
             ref="el">
       </label>
@@ -21,11 +21,12 @@
 <script>
 export default {
    props: {
-      value: String,
+      modelValue: String,
       placeholder: String,
       hidden: Boolean,
       disabled: Boolean,
       autocomplete: Boolean
-   }
+   },
+   emits: ["update:modelValue"]
 }
 </script>
