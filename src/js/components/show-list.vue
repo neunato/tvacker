@@ -13,7 +13,6 @@
    </section>
 </template>
 
-
 <script>
 import ShowThumbnail from "./show-thumbnail.vue"
 

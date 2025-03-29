@@ -15,7 +15,6 @@
 <script>
 import ProgressRing from "./progress-ring.vue"
 import TextRing from "./text-ring.vue"
-import {handle_error} from "../error"
 
 export default {
    props: {

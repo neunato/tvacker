@@ -24,10 +24,7 @@
    </section>
 </template>
 
-
 <script>
-import {handle_error} from "../error"
-
 export default {
    data: () => ({
       now: new Date()

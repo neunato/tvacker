@@ -25,7 +25,6 @@ import TrackedShows from "./tracked-shows.vue"
 import SearchShows from "./search-shows.vue"
 import Login from "./login.vue"
 import Register from "./register.vue"
-import {handle_error} from "../error"
 
 export default {
    data: () => ({
