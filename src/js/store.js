@@ -36,9 +36,10 @@ let store = createStore({
          let shows = await db.fetch()
 
          // Retrieve tracked show data from tvmaze.
-         shows = shows.map(async ({id, watched, timestamp}) => {
-            let data = await api.show(id)
+         shows = shows.map(async ({id, show_id, watched, timestamp}) => {
+            let data = await api.show(show_id)
             return {
+               id,
                watched,
                timestamp,
                data
@@ -63,13 +64,16 @@ let store = createStore({
 
       async track_show ({commit, state}, {show}) {
          let data = {
-            id: show.data.id,
+            id: db.generateID(),
+            show_id: show.data.id,
+            uid: db.getUID(),
             timestamp: Date.now(),
             watched: {
                season: null,
                episode: null
             }
          }
+         show.id = data.id
          show.watched = data.watched
          show.timestamp = data.timestamp
          let shows = [...state.shows, show]
@@ -80,12 +84,14 @@ let store = createStore({
       async untrack_show ({commit, state}, {show}) {
          let shows = state.shows.filter((s) => s !== show)
          commit("set", {shows})
-         return db.delete(show.data.id)
+         return db.delete(show.id)
       },
 
       async watch_episode ({commit, state}, {show, season, episode}) {
          let data = {
-            id: show.data.id,
+            id: show.id,
+            show_id: show.data.id,
+            uid: db.getUID(),
             timestamp: Date.now(),
             watched: {
                season,

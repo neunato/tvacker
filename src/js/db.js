@@ -85,7 +85,6 @@ let db = {
 
    async push (show) {
       try {
-         show.uid = auth.currentUser.uid
          await firestore.collection("shows").doc(String(show.id)).set(show)
       }
       catch (e) {
@@ -112,8 +111,15 @@ let db = {
          }
          catch (e) {}
       }
-   }
+   },
 
+   generateID() {
+      return firestore.collection("shows").doc().id
+   },
+
+   getUID() {
+      return auth.currentUser.uid
+   }
 }
 
 export default db
