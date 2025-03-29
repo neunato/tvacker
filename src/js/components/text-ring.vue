@@ -1,5 +1,5 @@
 <template>
-   <div class="ring text-ring" @click.stop="$emit('click', $event.target.value)">
+   <div class="ring text-ring" @click.capture.stop="$emit('click', $event.target.value)">
       <svg :width="radius * 2" :height="radius * 2">
          <circle
             :r="normalised_radius"
