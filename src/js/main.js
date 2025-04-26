@@ -4,6 +4,8 @@ import store from "./store"
 import db from "./db"
 import {log_error} from "./error"
 import App from "./components/app.vue"
+import tooltip from "floating-vue"
+import "floating-vue/dist/style.css"
 
 try {
    let user = await db.init()
@@ -17,6 +19,16 @@ try {
    let fragment = document.createDocumentFragment()
    let app = createApp(App)
    app.use(store)
+   app.use(tooltip, {
+      themes: {
+         tooltip: {
+            delay: {
+               show: 0,
+               hide: 0
+            }
+         }
+      }
+   })
    app.mount(fragment)
    element.parentNode.replaceChild(fragment, element)
    app.config.errorHandler = (error) => {log_error(error)}
