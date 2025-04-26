@@ -11,8 +11,8 @@
             </span>
          </template>
       </div>
-      <p v-if="!shows.length" class="show-list-note">Nothing to show</p>
-      <show-list v-else :shows="shows"></show-list>
+      <p v-if="!filtered_shows.length" class="show-list-note">Nothing to show</p>
+      <show-list v-else :shows="filtered_shows"></show-list>
    </section>
 </template>
 
@@ -31,23 +31,26 @@ export default {
             active: true,
             count: 0
          },
-         "finished": {
-            active: true,
+         "done": {
+            active: false,
             count: 0
          },
          "not started": {
-            active: true,
+            active: false,
             count: 0
          }
       }
    }),
    computed: {
       shows() {
-         return this.$store.state.shows.filter(({tags}) => tags.some((tag) => this.tags[tag].active))
+         return this.$store.state.shows
+      },
+      filtered_shows() {
+         return this.shows.filter(({tags}) => tags.some((tag) => this.tags[tag].active))
       }
    },
    watch: {
-      "$store.state.shows": {
+      shows: {
          immediate: true,
          handler() {
             let keys = Object.keys(this.tags)

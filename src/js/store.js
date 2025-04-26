@@ -17,7 +17,7 @@ function compute_tags(show) {
    if (ms_until_episode > 0 && ms_until_episode < ms_in_month)
       tags.push("coming soon")
    if (last_episode.season === watched.season && last_episode.number === watched.episode)
-      tags.push("finished")
+      tags.push("done")
    if (watched.season === null)
       tags.push("not started")
    return tags
@@ -51,7 +51,7 @@ let store = createStore({
             await db.login(email, password)
 
          // Retrieve tracked shows from firebase.
-         let tag_list = ["new episodes", "coming soon", "finished", "not started"]
+         let tag_list = ["new episodes", "coming soon", "done", "not started"]
          let shows = await db.fetch()
 
          // Retrieve tracked show data from tvmaze.
