@@ -29,7 +29,6 @@ let store = createStore({
       shows: [],           // tracked shows  - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
       results: [],         // searched shows - [{id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}]
       input: "",
-      show: null,          // open show      -  {id: 0, watched: {season: 0, episode: 0}, timestamp: 0, data: {...}}
       loading: false,
       suspended: false,    // disables requests to tvmaze api
       message: null
@@ -82,7 +81,7 @@ let store = createStore({
       async logout ({commit}) {
          commit("set", {loading: true})
          await db.logout()
-         commit("set", {loading: false, user: null, input: "", shows: [], results: [], show: null, suspended: false, message: null})
+         commit("set", {loading: false, user: null, input: "", shows: [], results: [], suspended: false, message: null})
       },
 
       async track_show ({commit, state}, {show}) {
@@ -128,14 +127,6 @@ let store = createStore({
          let shows = [...state.shows]
          commit("set", {shows})
          return db.push(data)
-      },
-
-      open_show ({commit}, {show}) {
-         commit("set", {show})
-      },
-
-      close_show ({commit}) {
-         commit("set", {show: null})
       },
 
       set_search_results ({commit}, {results}) {

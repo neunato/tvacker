@@ -12,7 +12,6 @@
          </keep-alive>
          <footer>Data by <a target="_blank" href="https://www.tvmaze.com/api" rel="noopener">TV Maze</a></footer>
       </main>
-      <keep-alive><show-preview v-if="show" :show="show"></show-preview></keep-alive>
 
       <section id="overlay" @click="hide_message"><p v-if="message">{{message}}</p></section>
    </div>
@@ -20,7 +19,6 @@
 
 
 <script>
-import ShowPreview from "./show-preview.vue"
 import TrackedShows from "./tracked-shows.vue"
 import SearchShows from "./search-shows.vue"
 import Login from "./login.vue"
@@ -33,7 +31,6 @@ export default {
    }),
 
    computed: {
-      show () { return this.$store.state.show },
       shows () { return this.$store.state.shows },
       user () { return this.$store.state.user },
       loading () { return this.$store.state.loading },
@@ -83,7 +80,6 @@ export default {
    },
 
    components: {
-      "show-preview": ShowPreview,
       "tracked-shows": TrackedShows,
       "search-shows": SearchShows,
       "login": Login,
