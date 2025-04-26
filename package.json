@@ -13,8 +13,8 @@
     "vuex": "4.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "5.2.1",
-    "vite": "6.2.1",
-    "vite-plugin-vue-devtools": "7.7.2"
+    "@vitejs/plugin-vue": "5.2.3",
+    "vite": "6.3.3",
+    "vite-plugin-vue-devtools": "7.7.5"
   }
 }
