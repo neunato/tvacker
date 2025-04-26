@@ -1,18 +1,19 @@
 <template>
    <section class="show-list">
-      <show-thumbnail v-for="show in shows" :show="show"></show-thumbnail>
+      <show v-for="show in shows" :show="show"></show>
    </section>
 </template>
 
 <script>
-import ShowThumbnail from "./show-thumbnail.vue"
+import Show from "./show.vue"
 
 export default {
    props: {
-      shows: Array
+      shows: Array,
+      filtered_shows: Array,
    },
    components: {
-      "show-thumbnail": ShowThumbnail
+      "show": Show
    }
 }
 </script>

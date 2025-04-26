@@ -1,5 +1,5 @@
 <template>
-   <div class="show-thumbnail" :class="{expanded}" @click="open_show">
+   <div class="show" :class="{expanded}" @click="open_show">
       <a target="_blank" :href="`https://www.imdb.com/title/${show.data.imdb}`" rel="noopener">
          <img class="show-image" :src="show.data.image" v-tooltip="'More info at IMDB'">
       </a>
