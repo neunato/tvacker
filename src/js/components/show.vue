@@ -1,6 +1,6 @@
 <template>
-   <div class="show" :class="{expanded}" @click="open_show">
-      <a target="_blank" :href="`https://www.imdb.com/title/${show.data.imdb}`" rel="noopener">
+   <div class="show" @click="open_show" @mouseover="preload">
+      <a target="_blank" :href="`https://www.imdb.com/title/${show.data.imdb}`" rel="noopener" @click.stop>
          <img class="show-image" :src="show.data.image" v-tooltip="'More info at IMDB'">
       </a>
       <div class="show-details">
@@ -22,21 +22,17 @@
          </div>
       </div>
       <div class="show-progress" :style="{height: `${progress}%`, backgroundColor: progress_color(progress)}"></div>
-      <div class="show-episodes" v-show="expanded">
-         <table>
-            <tbody>
-               <template v-for="{season, rows} in seasons_table">
-                  <tr v-for="row, i in rows">
-                     <th v-if="i===0" class="season label" :class="{watched: is_watched(season, 1), unreleased: !row[0].date || row[0].date > now}">{{season}}</th>
-                     <th v-else class="season"></th>
-                     <td v-for="{number, date} in row" class="episode" :class="{watched: is_watched(season, number), unreleased: !date || date > now}" @click.stop="watch_episode(season, number)" v-tooltip="date ? date.toLocaleDateString('en-CA') : '???'"><span>{{number}}</span></td>
-                  </tr>
-               </template>
-               <tr class="invisible"><td v-for="i in 11"></td></tr>
-            </tbody>
-         </table>
+      <div class="show-episodes" v-if="preloaded" v-show="expanded" :style="{ gridTemplateColumns: `repeat(${table_width + 1}, 1fr)` }">
+         <template v-for="({season, rows}) in seasons_table">
+            <template v-for="row, i in rows">
+               <span class="cell season label" v-if="i===0" :class="{watched: is_watched(season, 1), unreleased: !row[0].date || row[0].date > now}">{{season}}</span>
+               <span class="cell season" v-else></span>
+               <span class="cell episode" v-for="({number, date}) in row" :class="{watched: is_watched(season, number), unreleased: !date || date > now}" @click.stop="watch_episode(season, number)" v-tooltip="date ? date.toLocaleDateString('en-CA') : '???'">{{number}}</span>
+               <span class="cell " v-for="i in (table_width - row.length)"></span>
+            </template>
+         </template>
       </div>
-      <div class="track-button"><p @click.stop="track_show">{{tracked ? 'UN' : ''}}TRACK SHOW</p></div>
+      <div class="track-button" v-if="expanded"><p @click.stop="track_show">{{tracked ? 'UN' : ''}}TRACK SHOW</p></div>
    </div>
 </template>
 
@@ -44,6 +40,8 @@
 export default {
    data: () => ({
       expanded: false,
+      preloaded: false,
+      now: new Date()
    }),
 
    props: {
@@ -57,24 +55,26 @@ export default {
          return tracked.some(({data}) => data.id === id)
       },
 
-      seasons_table () {
+      table_width () {
          let seasons = [...this.show.data.seasons]
-
          let table_width = Math.max(...seasons.map(([_, {length}]) => length))
          table_width = Math.max(10, table_width)
          table_width = Math.min(25, table_width)
+         return table_width
+      },
 
+      seasons_table () {
+         let seasons = [...this.show.data.seasons]
          seasons = seasons.map(([season, episodes]) => {
             let rows = []
             let i = 0
             let n = episodes.length
             while (i < n) {
-               rows.push(episodes.slice(i, i + table_width))
-               i += table_width
+               rows.push(episodes.slice(i, i + this.table_width))
+               i += this.table_width
             }
             return {season, rows}
          })
-
          return seasons
       },
 
@@ -89,10 +89,9 @@ export default {
 
          let total = 0
          let watched = 0
-         let now = new Date()
          let episodes = show.data.episodes
          let seasons = show.data.seasons
-         seasons = [...seasons].filter(([_, [{date}]]) => date && date < now)
+         seasons = [...seasons].filter(([_, [{date}]]) => date && date < this.now)
 
          for (let [season, {length}] of seasons) {
             total += length
@@ -104,7 +103,7 @@ export default {
 
          for (let i = episodes.length - 1; i >= 0; i--) {
             let date = episodes[i].date
-            if (date > now)
+            if (date > this.now)
                total--
             else
                break
@@ -116,6 +115,10 @@ export default {
    methods: {
       open_show () {
          this.expanded = !this.expanded
+      },
+
+      preload () {
+         this.preloaded = true
       },
 
       track_show () {

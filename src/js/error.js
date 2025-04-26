@@ -32,6 +32,9 @@ function handle_error (error) {
 }
 
 function log_error (error) {
+   if (import.meta.env.DEV) {
+      console.error(error)
+   }
    let user = store.state.user || null
    let payload = {
       uid: user && user.uid,

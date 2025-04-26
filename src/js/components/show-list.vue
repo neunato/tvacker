@@ -1,6 +1,6 @@
 <template>
    <section class="show-list">
-      <show v-for="show in shows" :show="show"></show>
+      <show v-for="show in shows" :show="show" :key="show.id"></show>
    </section>
 </template>
 
@@ -9,8 +9,7 @@ import Show from "./show.vue"
 
 export default {
    props: {
-      shows: Array,
-      filtered_shows: Array,
+      shows: Array
    },
    components: {
       "show": Show

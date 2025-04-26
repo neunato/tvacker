@@ -398,9 +398,7 @@ footer {
 .show-list .show {
   box-sizing: content-box;
   position: relative;
-  height: $thumb-height;
-  height: $thumb-height;
-  height: $thumb-height;
+  height: auto;
   margin-bottom: $thumb-margin-bottom;
   font-size: $thumb-font-size;
   background-color: $container-bg;
@@ -408,9 +406,6 @@ footer {
   border-radius: $thumb-border-radius;
   overflow: hidden;
 
-  &.expanded {
-    height: auto;
-  }
   &:hover {
     border: $container-border;
     opacity: 0.95;
@@ -529,34 +524,33 @@ footer {
   border-bottom: 2px solid rgba(255, 255, 255, 0.05);
   font-weight: bold;
 }
-.show-episodes table {
+.show-episodes {
   position: relative;
   width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
   line-height: $show-table-line-height;
   font-size: $show-table-font-size;
   letter-spacing: 0;
   background-color: $body-bg-color;
   background-color: #0d1621;
   color: $show-table-fg-color;
+  display: grid;
 
-  th.season {
+  .cell.season {
     vertical-align: top;
     font-style: italic;
     font-weight: 600;
     border-right: $container-border;
     background-color: $show-table-season-bg-color;
   }
-  th.season.watched,
-  td.episode.watched {
+  .cell.season.watched,
+  .cell.episode.watched {
     color: $show-table-watched-fg-color;
   }
-  th.season.unreleased,
-  td.episode.unreleased {
+  .cell.season.unreleased,
+  .cell.episode.unreleased {
     color: $show-table-unreleased-fg-color;
   }
-  th.label::before,
+  .cell.season.label::before,
   &::after {
     content: "";
     position: absolute;
@@ -564,7 +558,7 @@ footer {
     right: 0;
     border-top: $container-border;
   }
-  td.episode span {
+  .cell.episode span {
     pointer-events: none;      // To prevent re-showing the title when hovering.;
   }
 }
@@ -588,10 +582,10 @@ footer {
   }
 }
 .show-preview .show.tracked {
-  td.episode:not(.unreleased) {
+  .cell.episode:not(.unreleased) {
     cursor: pointer;
   }
-  td.episode:not(.unreleased):hover {
+  .cell.episode:not(.unreleased):hover {
     color: $show-table-hover-fg-color;
   }
   .track-button p {
@@ -641,7 +635,7 @@ footer {
 /* MEDIA QUERIES */
 
 @media screen and (max-width: 500px) {
-  .show-episodes table {
+  .show-episodes {
     font-size: $show-table-font-size - 1px;
     letter-spacing: -1px;
   }
