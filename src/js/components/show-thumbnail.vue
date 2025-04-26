@@ -156,3 +156,47 @@ export default {
    }
 }
 </script>
+
+<style>
+.show-next-episode {
+   position: absolute;
+   right: 20px;
+   top: 42px;
+   transition: opacity 50ms ease;
+}
+.show-next-episode:active {
+   opacity: 0.1;
+}
+.show-tags {
+   position: absolute;
+   top: 110px;
+}
+.show-tags span {
+   border-radius: 50px;
+   padding: 2px 4px;
+   height: 15px;
+   line-height: 15px;
+   font-size: 10px;
+   font-weight: bold;
+   text-transform: uppercase;
+   margin-right: 5px;
+   background: #708AAD;
+   color: #1B222C;
+}
+
+h1 {
+   display: flex;
+   height: 55px;
+   font-size: 30px;
+   padding: 5px 10px;
+   border-radius: 5px;
+   font-family: "Roboto Mono";
+   font-weight: normal;
+}
+h1:hover {
+   background: rgba(0,0,0,0.1)
+}
+h1 span {
+   opacity: 0.7;
+}
+</style>
