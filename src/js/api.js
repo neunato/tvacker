@@ -42,10 +42,7 @@ let api = {
          else if (!next_episode && (!date || date > now))
             next_episode = episode
       }
-      image = {
-         small: image ? image.medium : null,
-         large: image ? image.original : null
-      }
+      image = image ? image.medium : null
 
       return {
          id,
