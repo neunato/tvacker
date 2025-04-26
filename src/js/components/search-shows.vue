@@ -2,7 +2,7 @@
    <section id="search-shows">
       <input-field v-model="input" placeholder="Search" @input="search(input, 200)" @enter="search(input)" :disabled="suspended" ref="input"></input-field>
       <p v-if="note" class="show-list-note">{{note}}</p>
-      <show-list :show_groups="{results}"></show-list>
+      <show-list :shows="results"></show-list>
    </section>
 </template>
 

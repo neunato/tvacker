@@ -4,6 +4,25 @@ import api from "./api"
 
 let stamp = 0
 
+function compute_tags(show) {
+   let now = new Date()
+   let ms_in_month = 30 * 24 * 60 * 60 * 1000
+   let {last_episode, next_episode} = show.data
+   let ms_since_episode = now - last_episode.date
+   let ms_until_episode = next_episode ? next_episode.date - now : -1
+   let watched = show.watched
+   let tags = []
+   if (ms_since_episode < ms_in_month && !(last_episode.season === watched.season && last_episode.number === watched.episode))
+      tags.push("new episodes")
+   if (ms_until_episode > 0 && ms_until_episode < ms_in_month)
+      tags.push("coming soon")
+   if (last_episode.season === watched.season && last_episode.number === watched.episode)
+      tags.push("finished")
+   if (watched.season === null)
+      tags.push("not started")
+   return tags
+}
+
 let store = createStore({
    state: {
       user: null,          // user email
@@ -33,19 +52,23 @@ let store = createStore({
             await db.login(email, password)
 
          // Retrieve tracked shows from firebase.
+         let tag_list = ["new episodes", "coming soon", "finished", "not started"]
          let shows = await db.fetch()
 
          // Retrieve tracked show data from tvmaze.
          shows = shows.map(async ({id, show_id, watched, timestamp}) => {
             let data = await api.show(show_id)
-            return {
+            let show = {
                id,
                watched,
                timestamp,
                data
             }
+            show.tags = compute_tags(show)
+            return show
          })
          shows = await Promise.all(shows)
+         shows = shows.sort((a, b) => tag_list.indexOf(a.tags[0]) - tag_list.indexOf(b.tags[0]))
 
          commit("set", {loading: false, user: email, shows})
       },
@@ -76,6 +99,7 @@ let store = createStore({
          show.id = data.id
          show.watched = data.watched
          show.timestamp = data.timestamp
+         show.tags = compute_tags(show)
          let shows = [...state.shows, show]
          commit("set", {shows})
          return db.push(data)
@@ -100,6 +124,7 @@ let store = createStore({
          }
          show.watched = data.watched
          show.timestamp = data.timestamp
+         show.tags = compute_tags(show)
          let shows = [...state.shows]
          commit("set", {shows})
          return db.push(data)
