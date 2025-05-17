@@ -5,7 +5,9 @@
             <span
                v-if="count"
                :class="{ active }"
-               @click="toggle_tag(tag)"
+               @click.exact="() => toggle_tag(tag, true)"
+               @click.ctrl="() => toggle_tag(tag, false)"
+               @click.shift="() => toggle_tag(tag, false)"
             >
                {{tag}}
             </span>
@@ -61,9 +63,9 @@ export default {
       shows: {
          immediate: true,
          handler() {
-            let keys = Object.keys(this.tags)
-            for (let key of keys) {
-               this.tags[key].count = 0
+            let tags = Object.values(this.tags)
+            for (let tag of tags) {
+               tag.count = 0
             }
             for (let show of this.shows) {
                for (let tag of show.tags) {
@@ -74,8 +76,18 @@ export default {
       }
    },
    methods: {
-      toggle_tag(tag) {
-         this.tags[tag].active = !this.tags[tag].active
+      toggle_tag(tag, exclusive) {
+         if (!exclusive) {
+            this.tags[tag].active = !this.tags[tag].active
+            return
+         }
+         let tags = Object.values(this.tags)
+         let active = this.tags[tag].active
+         let count = tags.reduce((count, tag) => (count + Number(tag.active)), 0)
+         for (let tag of tags) {
+            tag.active = false
+         }
+         this.tags[tag].active = (!active || count !== 1)
       }
    },
    components: {
