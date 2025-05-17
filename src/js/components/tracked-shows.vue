@@ -3,11 +3,11 @@
       <div class="filter-tags">
          <template v-for="{ active, count }, tag in tags">
             <span
-               v-show="count"
+               v-if="count"
                :class="{ active }"
                @click="toggle_tag(tag)"
             >
-               {{tag}} ({{count}})
+               {{tag}}
             </span>
          </template>
       </div>
@@ -23,6 +23,10 @@ import ShowList from "./show-list.vue"
 export default {
    data: () => ({
       tags: {
+         "recently added": {
+            active: true,
+            count: 0
+         },
          "new episodes": {
             active: true,
             count: 0
@@ -31,7 +35,11 @@ export default {
             active: true,
             count: 0
          },
-         "done": {
+         "watching": {
+            active: true,
+            count: 0
+         },
+         "up to date": {
             active: false,
             count: 0
          },
@@ -46,7 +54,7 @@ export default {
          return this.$store.state.shows
       },
       filtered_shows() {
-         return this.shows.filter(({tags}) => tags.some((tag) => this.tags[tag].active))
+         return this.shows.filter(({tags}) => tags?.some((tag) => this.tags[tag].active))
       }
    },
    watch: {

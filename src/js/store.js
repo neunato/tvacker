@@ -6,20 +6,25 @@ let stamp = 0
 
 function compute_tags(show) {
    let now = new Date()
+   let ms_in_day = 1 * 24 * 60 * 60 * 1000
    let ms_in_month = 30 * 24 * 60 * 60 * 1000
    let {last_episode, next_episode} = show.data
    let ms_since_episode = now - last_episode.date
    let ms_until_episode = next_episode ? next_episode.date - now : -1
    let watched = show.watched
    let tags = []
+   if (now - show.timestamp < ms_in_day)
+      tags.push("recently added")
    if (ms_since_episode < ms_in_month && !(last_episode.season === watched.season && last_episode.number === watched.episode))
       tags.push("new episodes")
    if (ms_until_episode > 0 && ms_until_episode < ms_in_month)
       tags.push("coming soon")
    if (last_episode.season === watched.season && last_episode.number === watched.episode)
-      tags.push("done")
+      tags.push("up to date")
    if (watched.season === null)
       tags.push("not started")
+   else
+      tags.push("watching")
    return tags
 }
 
@@ -51,7 +56,7 @@ let store = createStore({
             await db.login(email, password)
 
          // Retrieve tracked shows from firebase.
-         let tag_list = ["new episodes", "coming soon", "done", "not started"]
+         let tag_list = ["recently added", "new episodes", "coming soon", "watching", undefined, "up to date", "not started"]
          let shows = await db.fetch()
 
          // Retrieve tracked show data from tvmaze.
