@@ -4,6 +4,7 @@
          <template v-for="{ active, count }, tag in tags">
             <span
                v-if="count"
+               class="tag"
                :class="{ active }"
                @click.exact="() => toggle_tag(tag, true)"
                @click.ctrl="() => toggle_tag(tag, false)"
