@@ -28,7 +28,7 @@
       <div class="show-progress" :style="{backgroundColor: progress_color(progress, 0.3)}">
          <span :style="{height: `${progress}%`, backgroundColor: progress_color(progress)}"></span>
       </div>
-      <div class="show-episodes" v-if="preloaded" v-show="expanded" :style="{gridTemplateColumns: `repeat(${table_width + 1}, 1fr)`}">
+      <div class="show-episodes" v-if="preloaded" v-show="expanded" :style="{gridTemplateColumns: `repeat(${table_width + 1}, 1fr)`}" @click.stop>
          <template v-for="({season, rows}) in seasons_table">
             <template v-for="row, i in rows">
                <span class="cell season label" v-if="i===0" :class="{watched: is_watched(season, 1), unreleased: !row[0].date || row[0].date > now}">S{{zero_pad(season)}}</span>

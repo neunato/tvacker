@@ -10,7 +10,7 @@ $body-fg-color: rgb(192, 201, 209);
 $body-bg-color: #212b38;
 
 $overlay-bg-color: rgba(84, 113, 142, 0.13);
-$overlay-p-bg-color: rgb(50, 59, 68);
+$overlay-p-bg-color: #1b222c;
 $overlay-p-border-color: rgba(0, 0, 0, 0.15);
 
 $container-bg: #1b222c;
@@ -25,10 +25,7 @@ $title-color: rgb(255, 255, 255);
 
 $next-episode-width: 111px;
 
-$button-height: 22px;
-$button-padding-x: 8px;
 $button-font-size: 10px;
-$button-border-radius: 2px;
 $button-fg-color: rgb(255, 255, 255);
 $button-bg-color: rgb(93, 111, 129);
 $button-hover-bg-color: rgba(93, 111, 129, 0.8);
@@ -45,7 +42,7 @@ $input-height: 35px;
 $input-margin: 20px;
 $input-padding-x: 15px;
 $input-padding-y: 5px;
-$input-bg-color: rgb(34, 34, 34);
+$input-bg-color: #0c0f14;
 $input-fg-color: rgb(255, 255, 255);
 $input-disabled-fg-color: rgba(255, 255, 255, 0.5);
 $input-active-border-color: rgba(0, 0, 0, 0.4);
@@ -62,25 +59,12 @@ $progress-bar-width: 5px;
 
 $show-list-note-font-size: 13px;
 
-$show-list-heading-height: 30px;
-$show-list-heading-padding-x: 10px;
-$show-list-heading-font-size: 14px;
-$show-list-heading-bg-color: rgba(255, 255, 255, 0.075);
-$show-list-heading-fg-color: rgba(255, 255, 255, 0.8);
-
 $show-tag-inactive-bg-color: #485d79;
 $show-tag-bg-color: #708aad;
 $show-tag-height: 15px;
 $show-tag-padding-x: 4px;
 $show-filter-tag-height: 22px;
 $show-filter-tag-padding-x: 8px;
-
-$show-title-font-size: 16px;
-$show-image-height: 370px;
-$show-image-padding-y: 10px;
-$show-details-font-size: 12px;
-$show-details-separator-font-size: 10px;
-$show-details-separator-padding-x: 7px;
 
 $show-table-line-height: 26px;
 $show-table-font-size: 11px;
@@ -95,9 +79,13 @@ $show-button-fg-color: rgba(206, 212, 218, 0.7);
 $show-button-hover-fg-color: rgb(206, 212, 218);
 $show-button-track-bg-color: #278051;
 $show-button-untrack-bg-color: #91241d;
+$login-button-bg-color: #485d79;
+$login-button-hover-fg-color: #e2e7ed;
+$login-button-hover-bg-color: #526989;
 
 $tooltip-bg-color: #E4F0FF;
 $tooltip-fg-color: #0B1D33;
+
 
 @mixin fullscreen-fixed {
    position: fixed;
@@ -108,19 +96,13 @@ $tooltip-fg-color: #0B1D33;
    padding: 0 $wrap-padding-x;
 }
 @mixin button {
-   line-height: $button-height;
-   padding: 0 $button-padding-x;
-   border-radius: $button-border-radius;
+   padding: 2px 4px;
+   border-radius: 4px;
    font-size: $button-font-size;
-   letter-spacing: 0;
+   font-weight: 550;
+   color: $show-button-fg-color;
    text-transform: uppercase;
-   background-color: $button-bg-color;
-   color: $button-fg-color;
    cursor: pointer;
-
-   &:hover {
-      background-color: $button-hover-bg-color;
-   }
 }
 
 /* GENERAL */
@@ -206,10 +188,10 @@ main {
   transition: opacity 275ms ease, z-index 275ms step-start;
 }
 #overlay p {
-  padding: 10px 15px;
+   padding: 10px 15px;
    background-color: $overlay-p-bg-color;
    border: 1px solid $overlay-p-border-color;
-   border-radius: 2px;
+   border-radius: 8px;
 }
 #app main {
    transition: filter 100ms ease;
@@ -266,7 +248,7 @@ main {
    right: 0;
    height: $input-height;
    border-radius: $input-height;
-   border: 2px solid $input-bg-color !important;
+   border: 2px solid black !important;
    background-color: $input-bg-color;
    z-index: -1;
 }
@@ -345,7 +327,8 @@ footer {
 }
 #search-shows .input {
    max-width: $main-width;
-   margin: 0 auto 25px;
+   margin: 0 auto;
+   margin-bottom: 15px;
 }
 .suspended #search-shows .input {
    cursor: not-allowed;
@@ -355,6 +338,7 @@ footer {
    }
 }
 .show-list-note {
+   padding-top: 5px;
    text-align: center;
    font-size: $show-list-note-font-size;
 }
@@ -410,7 +394,6 @@ footer {
    padding-right: $progress-bar-width;
 
    &:hover {
-      border: $container-border;
       opacity: 0.95;
    }
    p {
@@ -552,7 +535,7 @@ footer {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 32px;
+      height: 28px;
       background-color: $show-table-bg-color;
    }
    .show-progress {
@@ -569,13 +552,9 @@ footer {
       }
    }
    .track-button {
-      padding: 2px 4px;
-      border-radius: 4px;
-      font-size: $button-font-size;
-      font-weight: 550;
-      color: $show-button-fg-color;
+      @include button;
+
       background-color: $show-button-track-bg-color;
-      cursor: pointer;
 
       &:hover {
          color: $show-button-hover-fg-color;
@@ -622,6 +601,16 @@ footer {
    }
    form .submit .button {
       @include button;
+
+      padding: 3px 6px;
+      border-radius: 5px;
+      font-size: 11px;
+      background-color: $login-button-bg-color;
+
+      &:hover {
+         background-color: $login-button-hover-bg-color;
+         color: $login-button-hover-fg-color;
+      }
    }
 }
 
