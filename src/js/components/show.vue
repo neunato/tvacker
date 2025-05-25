@@ -13,7 +13,7 @@
          <p class="years">{{show.data.years}}</p>
          <p class="genre">{{show.data.genre}}</p>
          <p class="language">{{show.data.language}}, {{show.data.runtime}} min</p>
-         <div class="show-next-episode" v-if="tracked" @click.stop="watch_next_episode" @click.right.stop.prevent="watch_prev_episode" :class="{ disabled: !show.watched.season || up_to_date }" v-tooltip="'Mark as watched'">
+         <div class="show-next-episode" v-if="tracked" @click.stop="watch_next_episode" @click.right.stop.prevent="watch_prev_episode" :class="{ disabled: !show.watched.season || up_to_date }" v-tooltip="episode_tooltip(upcoming.date)">
             <span class="label">{{up_to_date ? 'last episode' : 'next episode'}}</span>
             <span>S</span>{{zero_pad(upcoming.season)}}
             <span>E</span>{{zero_pad(upcoming.episode)}}
@@ -33,7 +33,7 @@
             <template v-for="row, i in rows">
                <span class="cell season label" v-if="i===0" :class="{watched: is_watched(season, 1), unreleased: !row[0].date || row[0].date > now}">S{{zero_pad(season)}}</span>
                <span class="cell season" v-else></span>
-               <span class="cell episode" v-for="({number, date}) in row" :class="{watched: is_watched(season, number), unreleased: !date || date > now}" @click.stop="watch_episode(season, number)" v-tooltip="date ? date.toLocaleDateString('en-CA') : '???'">{{number}}</span>
+               <span class="cell episode" v-for="({number, date}) in row" :class="{watched: is_watched(season, number), unreleased: !date || date > now}" @click.stop="watch_episode(season, number)" v-tooltip="episode_tooltip(date)">{{number}}</span>
                <span class="cell " v-for="i in (table_width - row.length)"></span>
             </template>
          </template>
@@ -184,11 +184,13 @@ export default {
          let show = this.show
          let last_episode = show.data.last_episode
          let seasons = show.data.seasons
+         let date = last_episode.date
 
          if (season === last_episode.season && episode === last_episode.number) {
             return {
                season,
-               episode
+               episode,
+               date
             }
          }
 
@@ -198,10 +200,12 @@ export default {
          }
          season = next.season
          episode = next.number
+         date = next.date
 
          return {
             season,
-            episode
+            episode,
+            date
          }
       },
 
@@ -239,6 +243,14 @@ export default {
          let season_at = this.show.watched.season
          let episode_at = this.show.watched.episode
          return season < season_at || (season===season_at && episode <= episode_at)
+      },
+
+      episode_tooltip (date) {
+         date = date ? date.toLocaleDateString("en-CA") : "???"
+         return {
+            content: `Release date<br>${date}`,
+            html: true
+         }
       },
 
       progress_color (percent, alpha = 1) {
