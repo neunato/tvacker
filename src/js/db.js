@@ -74,7 +74,8 @@ let db = {
 
    async fetch () {
       try {
-         let shows = await firestore.collection("shows").where("uid", "==", auth.currentUser.uid).get()
+         let uid = db.getUID()
+         let shows = await firestore.collection("shows").where("uid", "==", uid).get()
          shows = shows.docs.map((doc) => doc.data())
          return shows
       }
