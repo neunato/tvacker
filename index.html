@@ -5,14 +5,536 @@
    <meta charset="utf-8">
    <meta name="description" content="Track the TV shows you're watching.">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" type="text/css" href="dist/main.css">
+   <link rel="icon" href="/assets/favicon-CbJYWyFA.svg">
    <link rel="preconnect" href="https://www.googletagmanager.com">
    <link rel="preconnect" href="https://firebaseinstallations.googleapis.com">
    <script defer src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
    <script defer src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
    <script defer src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
    <script defer src="https://www.gstatic.com/firebasejs/7.2.3/firebase-analytics.js"></script>
-   <script defer src="dist/main.js"></script>
+   <style lang="scss">/* GENERAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+::before,
+::after {
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+a:active {
+  color: inherit;
+}
+li {
+  list-style-type: none;
+}
+body {
+  font-family: "Libre Franklin", "Helvetica Neue", helvetica, arial, sans-serif;
+  line-height: 1.5;
+  cursor: default;
+  color: rgb(192, 201, 209);
+  background-color: #212b38;
+  letter-spacing: 0.5px;
+}
+header,
+footer {
+  letter-spacing: 0;
+}
+#app {
+  background-color: inherit;
+}
+.invisible {
+  visibility: hidden;
+}
+main {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 10px;
+}
+* {
+  user-select: none;
+}
+/* LOADER */
+#app #overlay,
+#preloader {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(84, 113, 142, 0.13);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 100ms ease-in, z-index 100ms step-end;
+}
+#preloader {
+  transition: opacity 400ms ease-in, z-index 400ms step-end;
+}
+#preloader::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #212b38;
+  z-index: -1;
+}
+#app.loading #overlay,
+#app.message #overlay,
+#app.loading + #preloader {
+  opacity: 1;
+  z-index: 11;
+  transition: opacity 275ms ease, z-index 275ms step-start;
+}
+#overlay p {
+  padding: 10px 15px;
+  background-color: #1b222c;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}
+#app main {
+  transition: filter 100ms ease;
+}
+#app.loading main,
+#app.message main {
+  filter: blur(1.5px);
+  transition: filter 275ms ease;
+}
+#app.loading #overlay,
+#preloader {
+  cursor: wait;
+}
+/* INPUT */
+.input {
+  position: relative;
+  height: 35px;
+  padding: 5px 0;
+  z-index: 1;
+  cursor: text;
+}
+.input input {
+  display: block;
+  width: calc(100% - 30px);
+  height: 25px;
+  margin-left: 15px;
+  border: none;
+  background-color: transparent;
+  color: rgb(255, 255, 255);
+  cursor: inherit;
+}
+.input input:focus {
+  outline: none;
+}
+.input input:focus + .input-bg {
+  border-color: rgba(0, 0, 0, 0.4) !important;
+}
+.input input:-webkit-autofill, .input input:-webkit-autofill:hover, .input input:-webkit-autofill:focus, .input input:-webkit-autofill:active {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-box-shadow: none !important;
+  caret-color: rgb(255, 255, 255);
+  box-shadow: 0 0 0 100px #0c0f14 inset !important;
+}
+.input .input-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 35px;
+  border-radius: 35px;
+  border: 2px solid black !important;
+  background-color: #0c0f14;
+  z-index: -1;
+}
+.input label {
+  cursor: inherit;
+}
+.input label span {
+  position: absolute;
+  z-index: -500;
+}
+/* HEADER */
+header {
+  height: 40px;
+  line-height: 40px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0;
+  z-index: 2;
+}
+header nav {
+  position: relative;
+  max-width: 650px;
+  margin: 0 auto;
+}
+header nav .tab {
+  display: inline-block;
+  padding: 0 15px;
+  vertical-align: top;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+header nav .tab:hover {
+  color: rgba(255, 255, 255, 0.5);
+}
+header nav .tab.selected {
+  color: rgba(255, 255, 255, 0.7);
+}
+header nav .logout {
+  position: absolute;
+  right: 0;
+  line-height: 20px;
+  margin: 10px 0;
+  padding: 0 3px;
+  font-size: 10px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+}
+header nav .logout:hover {
+  color: rgba(255, 255, 255, 0.5);
+}
+/* FOOTER */
+footer {
+  height: 40px;
+  line-height: 40px;
+  margin: 30px -10px 0;
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 10px;
+  color: rgb(117, 137, 156);
+}
+/* SHOW LIST */
+#tracked-shows,
+#search-shows {
+  max-width: 650px;
+  min-height: calc(100% - 125px);
+  margin: 0 auto;
+}
+#search-shows .input {
+  max-width: 650px;
+  margin: 0 auto;
+  margin-bottom: 15px;
+}
+.suspended #search-shows .input {
+  cursor: not-allowed;
+}
+.suspended #search-shows .input input {
+  color: rgba(255, 255, 255, 0.5);
+}
+.show-list-note {
+  padding-top: 5px;
+  text-align: center;
+  font-size: 13px;
+}
+.tag {
+  padding: 0 4px;
+  line-height: 15px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  text-overflow: "...";
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: bold;
+  background-color: #708aad;
+  color: #1b222c;
+}
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+.filter-tags .tag {
+  padding: 0 8px;
+  line-height: 22px;
+  border: 2px solid;
+  background-color: #485d79;
+}
+.filter-tags .tag.active {
+  background-color: #708aad;
+}
+.show-tags {
+  position: absolute;
+  top: 110px;
+  left: 118px;
+  right: 20px;
+  display: flex;
+  gap: 5px;
+}
+.show {
+  box-sizing: content-box;
+  position: relative;
+  height: auto;
+  margin-bottom: 10px;
+  font-size: 12px;
+  background-color: #1b222c;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  padding-right: 5px;
+}
+.show:hover {
+  opacity: 0.95;
+}
+.show p {
+  text-overflow: "...";
+  white-space: nowrap;
+  overflow: hidden;
+}
+.show .title {
+  position: absolute;
+  top: 10px;
+  left: 117.65px;
+  right: 20px;
+  line-height: 27px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 18px;
+  color: rgb(255, 255, 255);
+}
+.show .years {
+  opacity: 0.7;
+}
+.show .show-image {
+  position: absolute;
+}
+.show .show-image img {
+  max-height: 140px;
+  min-height: 140px;
+  z-index: 1;
+}
+.show .show-image .imdb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 99.65px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  z-index: 1;
+  transition: all 80ms ease;
+}
+.show .show-image .imdb svg {
+  width: 36px;
+}
+.show .show-image .imdb:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+  opacity: 1;
+}
+.show .show-details {
+  height: 140px;
+  margin-left: 99.65px;
+  margin-right: 141px;
+  padding: 37px 10px 10px 18px;
+}
+.show .show-details .show-next-episode {
+  position: absolute;
+  right: 20px;
+  top: 38px;
+  display: flex;
+  height: 55px;
+  padding: 15px 10px 5px;
+  font-size: 30px;
+  font-family: "Roboto Mono";
+  font-weight: normal;
+  cursor: pointer;
+  transition: opacity 50ms ease;
+}
+.show .show-details .show-next-episode:active {
+  opacity: 0.1;
+}
+.show .show-details .show-next-episode.disabled {
+  opacity: 0.5;
+}
+.show .show-details .show-next-episode span {
+  opacity: 0.7;
+}
+.show .show-details .show-next-episode .label {
+  position: absolute;
+  top: 0px;
+  width: 111px;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 1.2px;
+}
+.show .show-details .track-button {
+  position: absolute;
+  right: 31px;
+  padding: 4px 0;
+  text-transform: uppercase;
+  top: 57px;
+  border-radius: 6px;
+  font-size: 13px;
+  width: 108px;
+  text-align: center;
+}
+.show .show-episodes {
+  position: relative;
+  display: grid;
+  width: 100%;
+  line-height: 26px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0;
+  color: rgb(55, 69, 81);
+  background-color: #0d1621;
+}
+.show .show-episodes .cell.season {
+  font-weight: 500;
+}
+.show .show-episodes .cell.season.watched {
+  color: #9ca3af;
+}
+.show .show-episodes .cell.episode.watched {
+  color: rgba(255, 255, 255, 0.7);
+}
+.show .show-episodes .cell.season.unreleased,
+.show .show-episodes .cell.episode.unreleased {
+  color: rgba(236, 109, 105, 0.7);
+}
+.show .show-episodes .cell.episode:not(.unreleased) {
+  cursor: pointer;
+}
+.show .show-episodes .cell.episode:not(.unreleased):hover {
+  color: rgb(255, 255, 255);
+}
+.show .show-episodes .cell.episode:not(.unreleased):active {
+  opacity: 0.5;
+}
+.show .show-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 28px;
+  background-color: #0d1621;
+}
+.show .show-progress {
+  z-index: 10;
+}
+.show .show-progress,
+.show .show-progress span {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 5px;
+  transition: height 100ms ease-out;
+}
+.show .track-button {
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 550;
+  color: rgba(206, 212, 218, 0.7);
+  text-transform: uppercase;
+  cursor: pointer;
+  background-color: #278051;
+}
+.show .track-button:hover {
+  color: rgb(206, 212, 218);
+}
+.show.tracked .track-button {
+  background-color: #91241d;
+}
+/* LOGIN FORM */
+#login,
+#register {
+  max-width: 360px;
+  min-height: calc(100% - 125px);
+  margin: 0 auto;
+  text-align: center;
+}
+#login form,
+#register form {
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  background-color: #1b222c;
+}
+#login form .input,
+#register form .input {
+  margin: 20px;
+  margin-bottom: 15px;
+}
+#login form .input:first-child,
+#register form .input:first-child {
+  margin-bottom: 15px;
+}
+#login form .input + .input,
+#register form .input + .input {
+  margin-top: 0;
+}
+#login form .submit,
+#register form .submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+#login form .submit .button,
+#register form .submit .button {
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 550;
+  color: rgba(206, 212, 218, 0.7);
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-size: 11px;
+  background-color: #485d79;
+}
+#login form .submit .button:hover,
+#register form .submit .button:hover {
+  background-color: #526989;
+  color: #e2e7ed;
+}
+/* TOOLTIP */
+.v-popper--theme-tooltip {
+  transition: none !important;
+}
+.v-popper--theme-tooltip .v-popper__inner {
+  background-color: #E4F0FF !important;
+  color: #0B1D33 !important;
+  padding: 3px 5px !important;
+  font-size: 14px !important;
+  text-align: center;
+}
+.v-popper--theme-tooltip .v-popper__arrow-outer {
+  border-color: #E4F0FF !important;
+}
+/* MEDIA QUERIES */
+@media screen and (max-width: 500px) {
+  .show .show-details {
+    margin-right: 0;
+  }
+  .show .show-details .show-next-episode,
+  .show .show-details .track-button {
+    display: none;
+  }
+  .show .show-episodes {
+    font-size: 10px;
+    letter-spacing: -1px;
+  }
+}
+   </style>
+  <script type="module" crossorigin src="/assets/index-_ujfDpfo.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-D8-JNrHP.css">
 </head>
 <body>
    <div id="app" class="loading"></div>
@@ -25,7 +547,7 @@
       }
    </script>
    <style>
-      @import url(https://fonts.googleapis.com/css2?family=Libre+Franklin&display=swap);
+   @import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
    </style>
 </body>
 </html>
