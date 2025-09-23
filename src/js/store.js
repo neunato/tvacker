@@ -118,7 +118,7 @@ let store = createStore({
             id: show.id,
             show_id: show.data.id,
             uid: db.getUID(),
-            timestamp: Date.now(),
+            timestamp: show.timestamp,
             watched: {
                season,
                episode
