@@ -174,7 +174,7 @@ export default {
          let watched = this.show.watched
          let season
          let episode
-         if (watched.season === 1 && watched.episode === 1) {
+         if (!watched.season || (watched.season === 1 && watched.episode === 1)) {
             season = null
             episode = null
          }
