@@ -28,12 +28,6 @@ function compute_tags(show) {
    return tags
 }
 
-function sort_shows(shows) {
-   let tag_list = ["recently added", "new episodes", "coming soon", "watching", undefined, "up to date", "not started"]
-   shows = shows.toSorted((a, b) => tag_list.indexOf(a.tags[0]) - tag_list.indexOf(b.tags[0]) || a.data.title.localeCompare(b.data.title))
-   return shows
-}
-
 let store = createStore({
    state: {
       user: null,          // user email
@@ -77,7 +71,6 @@ let store = createStore({
             return show
          })
          shows = await Promise.all(shows)
-         shows = sort_shows(shows)
 
          commit("set", {loading: false, user: email, shows})
       },
@@ -109,7 +102,7 @@ let store = createStore({
          show.watched = data.watched
          show.timestamp = data.timestamp
          show.tags = compute_tags(show)
-         let shows = sort_shows([...state.shows, show])
+         let shows = [...state.shows, show]
          commit("set", {shows})
          return db.push(data)
       },

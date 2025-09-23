@@ -54,7 +54,10 @@ export default {
    }),
    computed: {
       shows() {
-         return this.$store.state.shows
+         let tag_list = Object.keys(this.tags)
+         let shows = this.$store.state.shows
+         shows = shows.toSorted((a, b) => tag_list.indexOf(a.tags[0]) - tag_list.indexOf(b.tags[0]) || a.data.title.localeCompare(b.data.title))
+         return shows
       },
       filtered_shows() {
          return this.shows.filter(({tags}) => tags?.some((tag) => this.tags[tag].active))
