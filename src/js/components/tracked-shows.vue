@@ -50,20 +50,44 @@ export default {
             active: false,
             count: 0
          }
-      }
+      },
+      frozen_show_tags: {},
+      unsubscribe: null
    }),
    computed: {
       shows() {
          let tag_list = Object.keys(this.tags)
          let shows = this.$store.state.shows
-         shows = shows.toSorted((a, b) => tag_list.indexOf(a.tags[0]) - tag_list.indexOf(b.tags[0]) || a.data.title.localeCompare(b.data.title))
+         shows = shows.toSorted((a, b) => {
+            let tags_a = this.frozen_show_tags[a.id] || a.tags
+            let tags_b = this.frozen_show_tags[b.id] || b.tags
+            return tag_list.indexOf(tags_a[0]) - tag_list.indexOf(tags_b[0]) || a.data.title.localeCompare(b.data.title)
+         })
          return shows
       },
+      show_map() {
+         let map = {}
+         for (let show of this.shows) {
+            map[show.id] = {
+               tags_match: (show.tags || []).some((tag) => this.tags[tag].active),
+               frozen_tags_match: (this.frozen_show_tags[show.id] || []).some((tag) => this.tags[tag].active)
+            }
+         }
+         return map
+      },
       filtered_shows() {
-         return this.shows.filter(({tags}) => tags?.some((tag) => this.tags[tag].active))
+         return this.shows.filter(({ id }) => this.show_map[id].tags_match || this.show_map[id].frozen_tags_match)
       }
    },
    watch: {
+      show_map(new_shows, old_shows = {}) {
+         let ids = Object.keys(old_shows)
+         for (let id of ids) {
+            if (this.frozen_show_tags[id] && old_shows[id].frozen_tags_match && !new_shows[id]?.frozen_tags_match) {
+               this.frozen_show_tags[id] = null
+            }
+         }
+      },
       shows: {
          immediate: true,
          handler() {
@@ -73,6 +97,9 @@ export default {
             }
             for (let show of this.shows) {
                for (let tag of show.tags) {
+                  this.tags[tag].count++
+               }
+               for (let tag of this.frozen_show_tags[show.id] || []) {
                   this.tags[tag].count++
                }
             }
@@ -93,6 +120,18 @@ export default {
          }
          this.tags[tag].active = (!active || count !== 1)
       }
+   },
+   mounted() {
+      this.unsubscribe = this.$store.subscribeAction((action, state) => {
+         if (action.type !== "watch_episode") {
+            return
+         }
+         let show = action.payload.show
+         this.frozen_show_tags[show.id] = this.frozen_show_tags[show.id] || JSON.parse(JSON.stringify(show.tags))
+      })
+   },
+   beforeDestroy() {
+      this.unsubscribe()
    },
    components: {
       "show-list": ShowList
