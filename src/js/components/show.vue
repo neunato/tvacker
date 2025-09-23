@@ -1,5 +1,5 @@
 <template>
-   <div class="show" :class="{tracked}" @click="open_show" @mouseover="preload">
+   <div class="show" :class="{tracked}" @click="open_show" @mouseenter="preload">
       <div class="show-image">
          <img :src="show.data.image">
          <a v-if="show.data.imdb" target="_blank" :href="`https://www.imdb.com/title/${show.data.imdb}`" rel="noopener" @click.stop>
