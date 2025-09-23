@@ -74,6 +74,9 @@ export default {
       },
 
       table_width () {
+         if (!this.preloaded) {
+            return 0
+         }
          let seasons = [...this.show.data.seasons]
          let table_width = Math.max(...seasons.map(([_, {length}]) => length))
          table_width = Math.max(10, table_width)
@@ -82,6 +85,9 @@ export default {
       },
 
       seasons_table () {
+         if (!this.preloaded) {
+            return []
+         }
          let seasons = [...this.show.data.seasons]
          seasons = seasons.map(([season, episodes]) => {
             let rows = []
