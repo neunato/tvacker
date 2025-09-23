@@ -6,14 +6,14 @@ let stamp = 0
 
 function compute_tags(show) {
    let now = new Date()
-   let ms_in_day = 1 * 24 * 60 * 60 * 1000
+   let ms_in_two_days = 2 * 24 * 60 * 60 * 1000
    let ms_in_month = 30 * 24 * 60 * 60 * 1000
    let {last_episode, next_episode} = show.data
    let ms_since_episode = now - last_episode.date
    let ms_until_episode = next_episode ? next_episode.date - now : -1
    let watched = show.watched
    let tags = []
-   if (now - show.timestamp < ms_in_day)
+   if (now - show.timestamp < ms_in_two_days)
       tags.push("recently added")
    if (ms_since_episode < ms_in_month && !(last_episode.season === watched.season && last_episode.number === watched.episode))
       tags.push("new episodes")
