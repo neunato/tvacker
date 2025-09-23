@@ -21,7 +21,7 @@ function compute_tags(show) {
       tags.push("coming soon")
    if (last_episode.season === watched.season && last_episode.number === watched.episode)
       tags.push("up to date")
-   if (watched.season === null)
+   else if (watched.season === null)
       tags.push("not started")
    else
       tags.push("watching")
